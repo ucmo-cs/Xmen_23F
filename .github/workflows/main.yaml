@@ -11,6 +11,6 @@ jobs:
           fetch-depth: 0
       - uses: yesolutions/mirror-action@master
         with:
-          REMOTE: "ssh://git@github.com:ucmo-cs/Xmen_23F.git"
+          REMOTE: "git@github.com:ucmo-cs/Xmen_23F.git"
           GIT_SSH_PRIVATE_KEY: ${{ secrets.GITHUB_SSH_PRIVATE_KEY }}
           GIT_SSH_NO_VERIFY_HOST: "true"
