@@ -76,8 +76,9 @@ public class SecurityConfig {
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/user/**").permitAll()
                         .requestMatchers("/user").permitAll() // permit all requests to login
-                        .anyRequest().authenticated() // all other requests require authentication
+                        .anyRequest().authenticated()// all other requests require authentication
                 )
+                .cors(withDefaults())
                 .oauth2ResourceServer(oAuth -> oAuth.jwt(withDefaults()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(withDefaults())

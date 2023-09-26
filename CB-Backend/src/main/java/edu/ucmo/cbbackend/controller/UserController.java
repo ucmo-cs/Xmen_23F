@@ -11,6 +11,7 @@ import java.security.Principal;
 
 
 @RestController
+@CrossOrigin
 public class UserController {
 
  private final UserRepository userRepository;
