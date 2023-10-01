@@ -36,8 +36,11 @@ public class UserController {
         }
         user.setPassword(userDetailsService.passwordEncoder(user.getPassword()));
 
+
         try {
-            return (ResponseEntity<?>) ResponseEntity.status(201);
+            userRepository.save(user);
+            user.setPassword(null);
+            return ResponseEntity.ok().body(user);
         }
         catch (Exception e){
             return ResponseEntity.badRequest().body(e.toString());
