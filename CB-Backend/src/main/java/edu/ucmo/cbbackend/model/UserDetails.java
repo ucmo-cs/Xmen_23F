@@ -2,6 +2,7 @@ package edu.ucmo.cbbackend.model;
 
 import org.springframework.security.core.GrantedAuthority;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
@@ -19,8 +20,6 @@ public class UserDetails implements org.springframework.security.core.userdetail
         return List.of(() -> "user");
     }
 
-
-
     @Override
     public String getPassword() {
         return user.getPassword();
@@ -30,6 +29,7 @@ public class UserDetails implements org.springframework.security.core.userdetail
     public String getUsername() {
         return user.getUsername();
     }
+
 
     @Override
     public boolean isAccountNonExpired() {

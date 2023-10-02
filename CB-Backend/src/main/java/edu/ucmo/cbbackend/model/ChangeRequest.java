@@ -1,44 +1,22 @@
 package edu.ucmo.cbbackend.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.io.Serializable;
 
 @Table(name = "change_requests")
-public class ChangeRequest {
-    public Long getId() {
-        return id;
-    }
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+public class ChangeRequest implements Serializable {
 
-    public User getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(User author) {
-        this.author = author;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
     @Id
     private Long id;
@@ -57,18 +35,5 @@ public class ChangeRequest {
     @Column(nullable = false, length = 80)
     private String description;
 
-
-
-    ChangeRequest(){
-
-    }
-
-    public ChangeRequest(Long id, User author, String title, String description, String status) {
-        this.id = id;
-        this.author = author;
-        this.title = title;
-        this.description = description;
-        this.status = status;
-    }
 
 }

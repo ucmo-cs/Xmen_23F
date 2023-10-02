@@ -5,6 +5,7 @@ import edu.ucmo.cbbackend.model.UserDetails;
 import edu.ucmo.cbbackend.service.TokenService;
 import edu.ucmo.cbbackend.service.UserDetailsService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -32,9 +33,9 @@ public class AuthController {
         this.userDetailsService = userDetailsService;
     }
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Return a JWT", content = @io.swagger.v3.oas.annotations.media.Content),
-            @ApiResponse(responseCode = "401", description = "Return a String of 'Incorrect Credentials'", content = @io.swagger.v3.oas.annotations.media.Content),
-            @ApiResponse(responseCode = "500", description = "Return a String of 'Internal Server Error'", content = @io.swagger.v3.oas.annotations.media.Content)
+            @ApiResponse(responseCode = "200", description = "Return a JWT", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Return a String of 'Incorrect Credentials'", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Return a String of 'Internal Server Error'", content = @Content)
     })
     @Operation(summary = "Login endpoint")
     @PostMapping("/login")

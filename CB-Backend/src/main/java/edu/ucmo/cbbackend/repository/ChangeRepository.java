@@ -6,9 +6,10 @@ import org.springframework.stereotype.Repository;
 import edu.ucmo.cbbackend.model.ChangeRequest;
 
 @Repository
+
 public interface ChangeRepository  extends CrudRepository<ChangeRequest, Long> {
 
-    ChangeRequest findByID (long id);
+    ChangeRequest findById (long id);
     ChangeRequest findByStatus (String status);
 
 }
