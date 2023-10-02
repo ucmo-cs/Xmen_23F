@@ -15,6 +15,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.configurers.userdetails.DaoAuthenticationConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -74,14 +75,16 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**").permitAll() // permit all requests to swagger-ui
                         .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers("/login").permitAll()
-                        .requestMatchers("/api/v1/user/**").permitAll()
+                        .requestMatchers("/login/**").permitAll()
+                        .requestMatchers("/api/v1/user/**").permitAll() // permit all requests to login
                         .requestMatchers("/api/v1/user").permitAll() // permit all requests to login
                         .anyRequest().authenticated()// all other requests require authentication
                 )
                 .cors(withDefaults())
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
                 .oauth2ResourceServer(oAuth -> oAuth.jwt(withDefaults()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .httpBasic(withDefaults())
                 .build();
 
     }

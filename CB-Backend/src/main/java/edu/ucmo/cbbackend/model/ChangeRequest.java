@@ -39,6 +39,7 @@ public class ChangeRequest {
     @Id
     private Long id;
 
+
     @ManyToOne
     @JoinColumn(name = "author_id", nullable = false)
     private User author;
@@ -47,18 +48,23 @@ public class ChangeRequest {
     private String title;
 
     @Column(nullable = false, length = 80)
+    private String status;
+
+    @Column(nullable = false, length = 80)
     private String description;
+
 
 
     ChangeRequest(){
 
     }
 
-    public ChangeRequest(Long id, User author, String title, String description) {
+    public ChangeRequest(Long id, User author, String title, String description, String status) {
         this.id = id;
         this.author = author;
         this.title = title;
         this.description = description;
+        this.status = status;
     }
 
 }
