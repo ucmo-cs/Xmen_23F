@@ -10,6 +10,6 @@ import edu.ucmo.cbbackend.model.ChangeRequest;
 public interface ChangeRepository  extends CrudRepository<ChangeRequest, Long> {
 
     ChangeRequest findById (long id);
-    ChangeRequest findByStatus (String status);
+
 
 }

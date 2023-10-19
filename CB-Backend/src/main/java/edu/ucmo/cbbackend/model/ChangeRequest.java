@@ -1,39 +1,41 @@
 package edu.ucmo.cbbackend.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 
 @Table(name = "change_requests")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Builder
 
 public class ChangeRequest implements Serializable {
 
-
     @Id
+    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private Long id;
 
 
     @ManyToOne
-    @JoinColumn(name = "author_id", nullable = false)
+    @JoinColumn(name = "author", nullable = false, foreignKey = @ForeignKey(name = "FK_users"))
     private User author;
 
-    @Column(nullable = false, length = 20)
-    private String title;
 
-    @Column(nullable = false, length = 80)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ChangeType changeType;
 
-    @Column(nullable = false, length = 80)
+    @Column(nullable = false)
+    private Integer applicationId;
+
+    @Column(nullable = false)
     private String description;
+
+    @Column(nullable = false)
+    private String reason;
 
 
 }

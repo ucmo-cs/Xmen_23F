@@ -21,6 +21,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     implementation "me.paulschwarz:spring-dotenv:4.0.0"
+    implementation 'org.apache.commons:commons-lang3:3.13.0'
     runtimeOnly 'com.h2database:h2'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'

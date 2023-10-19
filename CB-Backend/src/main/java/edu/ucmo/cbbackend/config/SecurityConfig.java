@@ -7,12 +7,13 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import edu.ucmo.cbbackend.model.RsaKeyProperties;
-import edu.ucmo.cbbackend.service.UserDetailsService;
+import edu.ucmo.cbbackend.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.configurers.userdetails.DaoAuthenticationConfigurer;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -22,12 +23,16 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @EnableWebSecurity
+
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
     private final RsaKeyProperties rsaKeys;
 
@@ -48,8 +53,19 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        return new UserDetailsService();
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+        return jwtAuthenticationConverter;
+    }
+
+
+    @Bean
+    public UserService userService() {
+        return new UserService();
     }
 
     @Bean
@@ -59,7 +75,7 @@ public class SecurityConfig {
 
     @Bean
     public DaoAuthenticationConfigurer daoAuthenticationConfigurer() {
-        DaoAuthenticationConfigurer dao = new DaoAuthenticationConfigurer(userDetailsService());
+        DaoAuthenticationConfigurer dao = new DaoAuthenticationConfigurer(userService());
         dao.passwordEncoder(passwordEncoder());
 
         return dao;
@@ -77,7 +93,7 @@ public class SecurityConfig {
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/login/**").permitAll()
                         .requestMatchers("/api/v1/user/**").permitAll() // permit all requests to login
-                        .requestMatchers("/api/v1/user").permitAll() // permit all requests to login
+                        .requestMatchers("/api/v1/user").permitAll()// permit all requests to login
                         .anyRequest().authenticated()// all other requests require authentication
                 )
                 .cors(withDefaults())
