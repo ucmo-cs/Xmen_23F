@@ -11,8 +11,10 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -119,9 +121,11 @@ public class UserController {
         return ResponseEntity.ok().body(new UserResponse(userToUpdate));
     }
 
+    @SecurityRequirement(name = "jwtAuth")
     @GetMapping("/api/v1/user/me")
-    public User getCurrentUser(HttpServletRequest request) {
+    public ResponseEntity<?> getCurrentUser(HttpServletRequest request) {
         Principal principal = request.getUserPrincipal();
-        return (principal != null ? (userService.loadUserByUsername(principal.getName()))  : null);
+        User userData  =  userService.loadUserByUsername(principal.getName());
+             return ResponseEntity.ok().body(new UserResponse(userData));
     }
 }
