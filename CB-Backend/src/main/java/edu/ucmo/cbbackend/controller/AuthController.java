@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,27 +31,24 @@ public class AuthController {
     }
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Return a JWT", content = @Content),
-            @ApiResponse(responseCode = "401", description = "Return a String of 'Incorrect Credentials'", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Return a String of 'Unauthorized'", content = @Content),
             @ApiResponse(responseCode = "500", description = "Return a String of 'Internal Server Error'", content = @Content)
     })
     @Operation(summary = "Login endpoint")
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
         try{
-        User dbUser = userService.loadUserByUsername(loginRequest.getUsername());
-        if (dbUser == null) {
-            return ResponseEntity.badRequest().body("Incorrect Credentials");
-        }
-        if (!userService.passwordEncoder.matches(loginRequest.getPassword(), dbUser.getPassword())) {
-            return ResponseEntity.badRequest().body("Incorrect Credentials");
-        }
+            User dbUser = userService.loadUserByUsername(loginRequest.getUsername());
+            if ((dbUser == null) || !userService.passwordEncoder.matches(loginRequest.getPassword(), dbUser.getPassword())) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+            }
             String token = tokenService.generateToken(dbUser);
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
-            return ResponseEntity.ok(token);
-    }
+            return ResponseEntity.status(HttpStatus.OK).body(token);
+        }
         catch (Exception e){
-            return ResponseEntity.internalServerError().body("Internal Server Error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error");
         }
     }
 
