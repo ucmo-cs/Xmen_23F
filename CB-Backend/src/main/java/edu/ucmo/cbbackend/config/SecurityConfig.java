@@ -10,7 +10,6 @@ import edu.ucmo.cbbackend.model.RsaKeyProperties;
 import edu.ucmo.cbbackend.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.configurers.userdetails.DaoAuthenticationConfigurer;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -26,6 +25,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -62,7 +62,6 @@ public class SecurityConfig {
         return jwtAuthenticationConverter;
     }
 
-
     @Bean
     public UserService userService() {
         return new UserService();
@@ -84,17 +83,20 @@ public class SecurityConfig {
 
 
     @Bean()
-    @Order(Ordered.HIGHEST_PRECEDENCE)
+    @Order(1)
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.csrf(csrf -> csrf.disable())
+        return http.csrf(csrf -> {
+                    csrf.disable();
+                })
+                .securityMatcher("/api/**")
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/swagger-ui/**").permitAll() // permit all requests to swagger-ui
-                        .requestMatchers("/v3/api-docs/**").permitAll()
-                        .requestMatchers("/login").permitAll()
-                        .requestMatchers("/login/**").permitAll()
-                        .requestMatchers("/api/v1/user/**").permitAll() // permit all requests to login
-                        .requestMatchers("/api/v1/user").permitAll()// permit all requests to login
-                        .anyRequest().authenticated()// all other requests require authentication
+//                        .requestMatchers("/api/swagger-ui/**").permitAll() // permit all requests to swagger-ui
+//                        .requestMatchers("/api/v3/api-docs/**").permitAll()
+                                .requestMatchers("/api/login").permitAll()
+                                .requestMatchers("/api/login/**").permitAll()
+                                .requestMatchers("/api/v1/user/**").permitAll() // permit all requests to login
+                                .requestMatchers("/api/v1/user").permitAll()// permit all requests to login
+                                .anyRequest().authenticated()// all other requests require authentication
                 )
                 .cors(withDefaults())
                 .formLogin(AbstractHttpConfigurer::disable)
@@ -105,7 +107,13 @@ public class SecurityConfig {
 
     }
 
+    @Bean
+    @Order(2)
+    SecurityFilterChain h2ConsoleSecurityFilterChain(HttpSecurity http) throws Exception {
+        return http.securityMatcher(AntPathRequestMatcher.antMatcher("/h2-console/**")).authorizeHttpRequests(auth -> {
+            auth.requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll();
+        }).csrf(csrf -> csrf.ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**"))).headers(headers -> headers.frameOptions().disable()).build();
+    }
+
 
 }
-
-
