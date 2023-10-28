@@ -83,19 +83,15 @@ public class SecurityConfig {
 
 
     @Bean()
-    @Order(1)
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    @Order(4)
+    SecurityFilterChain securityFilterChainA(HttpSecurity http) throws Exception {
         return http.csrf(csrf -> {
                     csrf.disable();
                 })
-                .securityMatcher("/api/**")
                 .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/api/swagger-ui/**").permitAll() // permit all requests to swagger-ui
-//                        .requestMatchers("/api/v3/api-docs/**").permitAll()
-                                .requestMatchers("/api/login").permitAll()
-                                .requestMatchers("/api/login/**").permitAll()
-                                .requestMatchers("/api/v1/user/**").permitAll() // permit all requests to login
-                                .requestMatchers("/api/v1/user").permitAll()// permit all requests to login
+                                .requestMatchers( new AntPathRequestMatcher("/login")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher( "/api/v1/user/**")).permitAll() // permit all requests to login
+                                .requestMatchers(new AntPathRequestMatcher(  "/api/v1/user")).permitAll()// permit all requests to login
                                 .anyRequest().authenticated()// all other requests require authentication
                 )
                 .cors(withDefaults())
@@ -108,12 +104,31 @@ public class SecurityConfig {
     }
 
     @Bean
-    @Order(2)
+    @Order(3)
     SecurityFilterChain h2ConsoleSecurityFilterChain(HttpSecurity http) throws Exception {
         return http.securityMatcher(AntPathRequestMatcher.antMatcher("/h2-console/**")).authorizeHttpRequests(auth -> {
             auth.requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll();
         }).csrf(csrf -> csrf.ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**"))).headers(headers -> headers.frameOptions().disable()).build();
     }
+
+
+    @Bean
+    @Order(2)
+    SecurityFilterChain swaggerSecurityFilterChain(HttpSecurity http) throws Exception {
+        return http.securityMatcher(AntPathRequestMatcher.antMatcher("/swagger-ui/**")).authorizeHttpRequests(auth -> {
+            auth.requestMatchers(AntPathRequestMatcher.antMatcher("/swagger-ui/**")).permitAll();
+        }).csrf(csrf -> csrf.ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/swagger-ui/**"))).headers(headers -> headers.frameOptions().disable()).build();
+    }
+
+    @Bean
+    @Order(1)
+    SecurityFilterChain openApiSecurityFilterChain(HttpSecurity http) throws Exception {
+        return http.securityMatcher(AntPathRequestMatcher.antMatcher("/v3/api-docs/**")).authorizeHttpRequests(auth -> {
+            auth.requestMatchers(AntPathRequestMatcher.antMatcher("/v3/api-docs/**")).permitAll();
+        }).csrf(csrf -> csrf.ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/v3/api-docs/**"))).headers(headers -> headers.frameOptions().disable()).build();
+    }
+
+
 
 
 }

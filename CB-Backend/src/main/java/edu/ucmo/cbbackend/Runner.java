@@ -25,10 +25,13 @@ public class Runner implements CommandLineRunner     {
 
         Roles user = new Roles();
         user.setName("USER");
-        rolesRepository.save(user);
+
+        if (rolesRepository.findByName("USER") == null)
+            rolesRepository.save(user);
         Roles Department = new Roles();
         Department.setName("DEPARTMENT");
-        rolesRepository.save(Department);
+        if (rolesRepository.findByName("DEPARTMENT") == null)
+            rolesRepository.save(Department);
 
         rolesRepository.findAll().forEach((role -> {
             logger.info("{}", role);
