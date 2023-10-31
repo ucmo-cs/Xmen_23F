@@ -1,4 +1,3 @@
-import { yupResolver } from "@hookform/resolvers/yup"
 import axios from "axios"
 import { useState } from "react"
 import * as yup from "yup"
@@ -21,14 +20,8 @@ export default function () {
 		const login = async () => {
 			await axios
 				.post(
-					`http://localhost:8080/api/v1/token`,
-					{},
-					{
-						auth: {
-							username: userName,
-							password: password,
-						},
-					}
+					`http://localhost:8080/login`,
+					{username: userName, password: password}
 				)
 				.then(response => {
 					console.log(response.data)
@@ -89,6 +82,7 @@ export default function () {
 							type="password"
 							className={`bg-slate-200 border-b-2 border-slate-600 rounded-sm `}
 							//"bg-slate-200 border-b-2 border-slate-600 rounded-sm"
+							placeholder="Enter your password"
 						/>
 					</div>
 					<div className="flex justify-center items-center">
