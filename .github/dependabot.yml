@@ -6,7 +6,7 @@
 version: 2
 updates:
   - package-ecosystem: "npm" # See documentation for possible values
-    directory: "/CB-Frontend" # Location of package manifests
+    directory: "/Frontend-CB" # Location of package manifests
     schedule:
       interval: "weekly"
   - package-ecosystem: "gradle"

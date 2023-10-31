@@ -17,9 +17,9 @@ public class ChangeRequestBody {
     private ChangeType changeType;
     private String description;
     private String reason;
-    private Integer applicationId;
+    private Long applicationId;
 
-    public ChangeRequest toChangeRequest(User user){
+    public ChangeRequest toChangeRequest(User user) {
         return ChangeRequest.builder()
                 .author(user)
                 .changeType(changeType)

@@ -1,40 +1,70 @@
-import axios from "axios"
-import { useState } from "react"
-import * as yup from "yup"
-import { useForm } from "react-hook-form"
-import toast, { Toaster } from "react-hot-toast"
+import { yupResolver } from '@hookform/resolvers/yup';
+import axios from 'axios';
+import  { useState } from 'react';
+import * as yup from "yup";
+import { SubmitHandler, useForm } from 'react-hook-form';
+import toast, { Toaster } from 'react-hot-toast';
+
+
+type formInputs = {
+	userName: string
+	password: string
+}
+
 
 const schema = yup.object().shape({
 	userName: yup.string().required("Username is required"),
 	password: yup.string().required("Password is required"),
 })
 
+
 export default function () {
-	const { register, handleSubmit } = useForm()
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<formInputs>({
+		resolver: yupResolver(schema),
+	})
 
-	const [token, setToken] = useState("")
+	const [token, setToken] = useState<string>("")
 
-	const onSubmit = data => {
+
+
+	const onSubmit: SubmitHandler<formInputs> = data => {
+		console.log(data)
+
 		const { userName, password } = data
+
+		
 
 		const login = async () => {
 			await axios
 				.post(
-					`http://localhost:8080/login`,
-					{username: userName, password: password}
+					`http://${import.meta.env.VITE_API_URL}/api/v1/token`,
+					{},
+					{
+						auth: {
+							username: userName,
+							password: password,
+						},
+					}
 				)
 				.then(response => {
 					console.log(response.data)
 					setToken(response.data)
 					localStorage.setItem("token", response.data)
+
 				})
 				.catch(error => {
 					if (error.response.status === 401) {
 						toast.error("Invalid Credentials")
-					} else {
+					}
+					else {
 						toast.error("Something went wrong")
 					}
 				})
+
 		}
 
 		login()
@@ -52,7 +82,7 @@ export default function () {
 				</div>
 
 				<form onSubmit={handleSubmit(onSubmit)} className="p-8 ">
-					<Toaster position="bottom-center" />
+				<Toaster   position="bottom-center" />
 					<div className="mb-4">
 						<label
 							htmlFor="username"
@@ -60,12 +90,15 @@ export default function () {
 							Username
 						</label>
 
+				
 						<input
 							required
 							{...register("userName", { required: true })}
 							type="text"
 							id="username"
-							className={`bg-slate-200 border-b-2 border-slate-600 rounded-sm `}
+							className={`bg-slate-200 border-b-2 border-slate-600 rounded-sm ${
+								errors.userName ? "border-red-500" : ""
+							}`}
 							//"bg-slate-200 border-b-2 border-slate-600 rounded-sm"
 							placeholder="Enter your username"
 						/>
@@ -80,10 +113,21 @@ export default function () {
 							required
 							{...register("password", { required: true })}
 							type="password"
-							className={`bg-slate-200 border-b-2 border-slate-600 rounded-sm `}
+							className={`bg-slate-200 border-b-2 border-slate-600 rounded-sm ${
+								errors.password ? "border-red-500" : ""
+							}`}
 							//"bg-slate-200 border-b-2 border-slate-600 rounded-sm"
-							placeholder="Enter your password"
 						/>
+						{errors.password && (
+							<p className="text-red-500 text-sm mt-1">
+								{errors.password.message}
+							</p>
+						)}
+						{errors.password && (
+							<p className="text-red-500 text-sm mt-1">
+								{errors.password.message}
+							</p>
+						)}
 					</div>
 					<div className="flex justify-center items-center">
 						<button

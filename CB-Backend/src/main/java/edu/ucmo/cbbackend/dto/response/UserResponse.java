@@ -16,14 +16,15 @@ public class UserResponse {
     private Long id;
     private String Username;
     private Roles role;
-    private List<ChangeRequest> changeRequests;
+    private List<Long> changeRequestsId;
 
- public UserResponse(User user) {
-          this.id = user.getId();
-            this.Username = user.getUsername();
-            this.role = user.getRoles();
-            this.changeRequests = user.getChangeRequests();
- }
+    public UserResponse(User user) {
+        this.id = user.getId();
+        this.Username = user.getUsername();
+        this.role = user.getRoles();
+        this.changeRequestsId = user.getChangeRequests().stream().map(
+                ChangeRequest::getId).toList();
+    }
 
 
 }

@@ -1,7 +1,10 @@
 package edu.ucmo.cbbackend.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -29,7 +32,7 @@ public class ChangeRequest implements Serializable {
     private ChangeType changeType;
 
     @Column(nullable = false)
-    private Integer applicationId;
+    private Long applicationId;
 
     @Column(nullable = false)
     private String description;
