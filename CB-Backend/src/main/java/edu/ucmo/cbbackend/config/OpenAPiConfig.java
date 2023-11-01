@@ -2,12 +2,11 @@ package edu.ucmo.cbbackend.config;
 
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.servers.Server;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import io.swagger.v3.oas.models.OpenAPI;
 
 @Configuration
 @SecurityScheme(
@@ -18,13 +17,11 @@ import io.swagger.v3.oas.models.OpenAPI;
 
 public class OpenAPiConfig {
 
-    @Value("${cbbackend.devserver.url}")
-    private String devServerUrl;
 
     @Bean
     public OpenAPI openAPi() {
         Server devServer = new Server();
-        devServer.setUrl(devServerUrl);
+        devServer.setUrl("http://localhost:8080");
         devServer.setDescription("Your development server");
 
         Info info = new Info()
@@ -34,7 +31,6 @@ public class OpenAPiConfig {
 
         return new OpenAPI().info(info).addServersItem(devServer);
     }
-
 
 
 }
