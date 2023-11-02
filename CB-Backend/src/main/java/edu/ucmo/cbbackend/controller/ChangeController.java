@@ -4,11 +4,16 @@ import edu.ucmo.cbbackend.dto.request.ChangeRequestBody;
 import edu.ucmo.cbbackend.dto.response.ChangeRequestHttpResponse;
 import edu.ucmo.cbbackend.model.ChangeRequest;
 import edu.ucmo.cbbackend.model.User;
+import edu.ucmo.cbbackend.repository.RolesRepository;
 import edu.ucmo.cbbackend.service.ChangeService;
 import edu.ucmo.cbbackend.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
 
 
 @RestController("/api/v1/change")
@@ -16,11 +21,14 @@ public class ChangeController {
 
     private final UserService userService;
     private final ChangeService changeService;
+    private final RolesRepository rolesRepository;
 
-    public ChangeController(ChangeService changeService, UserService userService) {
+    public ChangeController(ChangeService changeService, UserService userService,
+                            RolesRepository rolesRepository) {
         this.changeService = changeService;
         this.userService = userService;
 
+        this.rolesRepository = rolesRepository;
     }
 
     @SecurityRequirement(name = "jwtAuth")
@@ -72,6 +80,19 @@ public class ChangeController {
     }
 
     @SecurityRequirement(name = "jwtAuth")
+    @GetMapping("/api/v1/change/")
+    public ResponseEntity<?> getChange(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "5") Integer size) {
+
+        if (userService.userRepository.findByUsername(request.getUserPrincipal().getName()).getRoles().equals(rolesRepository.findByName("USER"))) {
+            Page<ChangeRequestHttpResponse> list = changeService.findAllByUserIdAndSortByDate(page, size, request.getUserPrincipal().getName());
+            return ResponseEntity.ok().body(list);
+        }
+        Page<ChangeRequestHttpResponse> list = changeService.findAllSortByDate(page, size);
+        return ResponseEntity.ok().body(list);
+    }
+
+    
+    @SecurityRequirement(name = "jwtAuth")
     @PostMapping("/api/v1/change")
     public ResponseEntity<?> change(@RequestBody ChangeRequestBody change) {
 
@@ -80,7 +101,7 @@ public class ChangeController {
             ChangeRequest convertedChangeRequest = change.toChangeRequest(user);
             changeService.save(convertedChangeRequest);
             ChangeRequestHttpResponse changeRequestHttpResponse = new ChangeRequestHttpResponse(convertedChangeRequest);
-            return ResponseEntity.ok().body(change);
+            return ResponseEntity.created(URI.create("/api/v1/change/" + changeRequestHttpResponse.getId())).body(changeRequestHttpResponse);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.toString());
         }

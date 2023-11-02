@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,6 +21,7 @@ public class ChangeRequestBody {
     private String reason;
     private Long applicationId;
 
+
     public ChangeRequest toChangeRequest(User user) {
         return ChangeRequest.builder()
                 .author(user)
@@ -26,6 +29,7 @@ public class ChangeRequestBody {
                 .description(description)
                 .reason(reason)
                 .applicationId(applicationId)
+                .dateCreated(new Date())
                 .build();
     }
 }
