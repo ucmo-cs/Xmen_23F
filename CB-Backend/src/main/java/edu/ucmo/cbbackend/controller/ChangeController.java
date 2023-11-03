@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
-
-@RestController("/api/v1/change")
+@RestController
+@CrossOrigin
 public class ChangeController {
 
     private final UserService userService;
@@ -47,7 +47,8 @@ public class ChangeController {
 
 
             changeService.save(changeRequest);
-            return ResponseEntity.ok().body(changeRequest);
+            ChangeRequestHttpResponse changeRequestHttpResponse = new ChangeRequestHttpResponse(changeRequest);
+            return ResponseEntity.ok().body(changeRequestHttpResponse);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.toString());
         }
@@ -73,16 +74,18 @@ public class ChangeController {
     public ResponseEntity<?> getChangeById(@PathVariable Long id) {
         try {
             ChangeRequest changeRequest = changeService.findById(id);
-            return ResponseEntity.ok().body(changeRequest);
+            if (changeRequest == null)
+                return ResponseEntity.badRequest().body("Change Request does not exist");
+            ChangeRequestHttpResponse changeRequestHttpResponse = new ChangeRequestHttpResponse(changeRequest);
+            return ResponseEntity.ok().body(changeRequestHttpResponse);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.toString());
+            return ResponseEntity.internalServerError().body(e.toString());
         }
     }
 
     @SecurityRequirement(name = "jwtAuth")
-    @GetMapping("/api/v1/change/")
+    @GetMapping("/api/v1/change")
     public ResponseEntity<?> getChange(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "5") Integer size) {
-
         if (userService.userRepository.findByUsername(request.getUserPrincipal().getName()).getRoles().equals(rolesRepository.findByName("USER"))) {
             Page<ChangeRequestHttpResponse> list = changeService.findAllByUserIdAndSortByDate(page, size, request.getUserPrincipal().getName());
             return ResponseEntity.ok().body(list);
@@ -91,7 +94,7 @@ public class ChangeController {
         return ResponseEntity.ok().body(list);
     }
 
-    
+
     @SecurityRequirement(name = "jwtAuth")
     @PostMapping("/api/v1/change")
     public ResponseEntity<?> change(@RequestBody ChangeRequestBody change) {

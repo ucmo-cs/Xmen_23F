@@ -89,10 +89,10 @@ public class SecurityConfig {
                     csrf.disable();
                 })
                 .authorizeHttpRequests(auth -> auth
-                                .requestMatchers( new AntPathRequestMatcher("/login")).permitAll()
-                                .requestMatchers(new AntPathRequestMatcher( "/api/v1/user/**")).permitAll() // permit all requests to login
-                                .requestMatchers(new AntPathRequestMatcher(  "/api/v1/user")).permitAll()// permit all requests to login
-                                .anyRequest().authenticated()// all other requests require authentication
+                        .requestMatchers(new AntPathRequestMatcher("/login")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/v1/user/**")).permitAll() // permit all requests to login
+                        .requestMatchers(new AntPathRequestMatcher("/api/v1/user")).permitAll()// permit all requests to login
+                        .anyRequest().authenticated()// all other requests require authentication
                 )
                 .cors(withDefaults())
                 .formLogin(AbstractHttpConfigurer::disable)
@@ -102,6 +102,7 @@ public class SecurityConfig {
                 .build();
 
     }
+
 
     @Bean
     @Order(3)
@@ -127,8 +128,6 @@ public class SecurityConfig {
             auth.requestMatchers(AntPathRequestMatcher.antMatcher("/v3/api-docs/**")).permitAll();
         }).csrf(csrf -> csrf.ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/v3/api-docs/**"))).headers(headers -> headers.frameOptions().disable()).build();
     }
-
-
 
 
 }

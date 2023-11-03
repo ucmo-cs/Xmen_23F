@@ -4,6 +4,8 @@ import { useState } from "react"
 import * as yup from "yup"
 import { useForm } from "react-hook-form"
 import toast, { Toaster } from "react-hot-toast"
+import { useNavigate } from "react-router-dom"
+import apiFetch from "../utils/apiFetch"
 
 const schema = yup.object().shape({
 	userName: yup.string().required("Username is required"),
@@ -15,33 +17,25 @@ export default function () {
 
 	const [token, setToken] = useState("")
 
+	const navigate = useNavigate()
+
 	const onSubmit = data => {
 		const { userName, password } = data
 
 		const login = async () => {
-			await axios
-				.post(
-					`http://localhost:8080/api/v1/token`,
-					{},
-					{
-						auth: {
-							username: userName,
-							password: password,
-						},
-					}
-				)
-				.then(response => {
-					console.log(response.data)
-					setToken(response.data)
-					localStorage.setItem("token", response.data)
-				})
-				.catch(error => {
-					if (error.response.status === 401) {
-						toast.error("Invalid Credentials")
-					} else {
-						toast.error("Something went wrong")
-					}
-				})
+			const token = await apiFetch("POST", "/login", {
+				username: userName,
+				password: password,
+			})
+
+			if (token && token.status === 200) {
+				localStorage.setItem("token", token.data)
+				navigate("/dashboard")
+			} else if (token.status === 401) {
+				toast.error("Invalid username or password")
+			} else {
+				toast.error("Something went wrong")
+			}
 		}
 
 		login()
@@ -86,6 +80,7 @@ export default function () {
 						<input
 							required
 							{...register("password", { required: true })}
+							placeholder="Enter your password"
 							type="password"
 							className={`bg-slate-200 border-b-2 border-slate-600 rounded-sm `}
 							//"bg-slate-200 border-b-2 border-slate-600 rounded-sm"
