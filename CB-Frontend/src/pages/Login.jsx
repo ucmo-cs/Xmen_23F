@@ -27,6 +27,7 @@ export default function () {
 				username: userName,
 				password: password,
 			})
+			console.log(token)
 
 			if (token && token.status === 200) {
 				localStorage.setItem("token", token.data)

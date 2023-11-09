@@ -37,14 +37,14 @@ public class ChangeService {
     }
 
     public Page<ChangeRequestHttpResponse> findAllSortByDate(int page, int size) {
-        Page<ChangeRequestHttpResponse> changeRequestHttpResponses = changeRepository.findAll(PageRequest.of(page, size, Sort.by("dateCreated").descending())).map(ChangeRequestHttpResponse::new);
+        Page<ChangeRequestHttpResponse> changeRequestHttpResponses = changeRepository.findAll(PageRequest.of(page, size, Sort.by("dateUpdated").descending())).map(ChangeRequestHttpResponse::new);
         return changeRequestHttpResponses;
     }
 
     public Page<ChangeRequestHttpResponse> findAllByUserIdAndSortByDate(int page, int size, String username) {
         User user = userRepository.findByUsername(username);
 
-        Page<ChangeRequest> changeRequestHttpResponses = changeRepository.findAllByAuthor(user, PageRequest.of(page, size, Sort.by("dateCreated").descending()));
+        Page<ChangeRequest> changeRequestHttpResponses = changeRepository.findAllByAuthor(user, PageRequest.of(page, size, Sort.by("dateUpdated").descending()));
         return changeRequestHttpResponses.map(ChangeRequestHttpResponse::new);
     }
 

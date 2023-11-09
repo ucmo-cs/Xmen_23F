@@ -13,9 +13,18 @@ function Dashboard() {
 		queryFn: async () => {
 			const res = await apiFetch("GET", "/api/v1/change")
 			console.log(res.data)
-			return res.data.content
+			return res.data
 		},
 	})
+
+	if (isError) {
+		return (
+			<div>
+				<NavBar />
+				<p> There is an error </p>
+			</div>
+		)
+	}
 
 	if (isLoading) {
 		//https://flowbite.com/docs/components/spinner/
@@ -68,7 +77,7 @@ function Dashboard() {
 						</tr>
 					</thead>
 					<tbody className="bg-white">
-						{data.map(change => (
+						{data.content.map(change => (
 							<tr className="bg-white" key={change.id}>
 								<th
 									scope="row"

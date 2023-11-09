@@ -83,6 +83,7 @@ public class Runner implements CommandLineRunner {
                         .changeType(changeType)
                         .dateCreated(faker.date().birthday())
                         .description(faker.lorem().sentence(20))
+                        .dateUpdated(faker.date().birthday())
                         .author(user)
                         .reason(faker.lorem().sentence(20))
                         .build();
@@ -117,6 +118,7 @@ public class Runner implements CommandLineRunner {
                         .description(faker.lorem().sentence(20))
                         .reason(faker.lorem().sentence(20))
                         .author(user)
+                        .dateUpdated(faker.date().birthday())
                         .build();
                 changeService.save(changeRequest);
             }
