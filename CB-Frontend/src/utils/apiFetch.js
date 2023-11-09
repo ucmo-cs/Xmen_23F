@@ -24,7 +24,7 @@ export default async function apiFetch(
 ) {
 	const token = localStorage.getItem("token")
 
-	if (token || endpoint !== "/login") {
+	if (endpoint !== "/login") {
 		headers["Authorization"] = `Bearer ${token}`
 	}
 
@@ -35,6 +35,7 @@ export default async function apiFetch(
 		headers: headers,
 	})
 		.then(res => {
+			console.log(res)
 			return res
 		})
 		.catch(err => {

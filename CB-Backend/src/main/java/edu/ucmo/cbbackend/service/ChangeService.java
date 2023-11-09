@@ -15,8 +15,6 @@ public class ChangeService {
 
     ChangeRepository changeRepository;
     private final UserRepository userRepository;
-
-
     public ChangeService(ChangeRepository changeRepository,
                          UserRepository userRepository) {
         this.changeRepository = changeRepository;
