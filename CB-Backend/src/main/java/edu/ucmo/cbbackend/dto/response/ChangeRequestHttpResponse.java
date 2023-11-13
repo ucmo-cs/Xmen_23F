@@ -28,6 +28,7 @@ public class ChangeRequestHttpResponse {
         this.description = changeRequest.getDescription();
         this.reason = changeRequest.getReason();
         this.DateCreated = changeRequest.getDateCreated();
+        this.DateCreated = changeRequest.getDateUpdated();
     }
 
 

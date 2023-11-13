@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.Date;
 
 @RestController
 @CrossOrigin
@@ -44,7 +45,9 @@ public class ChangeController {
                 changeRequest.setChangeType(changeRequestBody.getChangeType());
             if (changeRequestBody.getDescription() != null)
                 changeRequest.setDescription(changeRequestBody.getDescription());
-
+            if (changeRequestBody.getReason() != null)
+                changeRequest.setReason(changeRequestBody.getReason());
+            changeRequest.setDateUpdated(new Date());
 
             changeService.save(changeRequest);
             ChangeRequestHttpResponse changeRequestHttpResponse = new ChangeRequestHttpResponse(changeRequest);

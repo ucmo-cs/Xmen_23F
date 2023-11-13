@@ -45,5 +45,10 @@ public class ChangeRequest implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateCreated;
 
+    @Column(nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateUpdated;
+
+
 
 }

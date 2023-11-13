@@ -30,6 +30,7 @@ public class ChangeRequestBody {
                 .reason(reason)
                 .applicationId(applicationId)
                 .dateCreated(new Date())
+                .dateUpdated(new Date())
                 .build();
     }
 }
