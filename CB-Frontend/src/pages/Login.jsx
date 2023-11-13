@@ -41,7 +41,7 @@ export default function () {
 	}
 
 	const handleCreateUser = () => {
-		window.location.href = "http://localhost:5173/createuser";
+		navigate('/createuser')
 	}
 
 	return (
@@ -86,7 +86,7 @@ export default function () {
 							placeholder="Enter your password"
 						/>
 					</div>
-					<div className="flex justify-center items-center flex-col">
+					<div className="flex justify-center items-center flex-col p-4">
 						<button
 							type="submit"
 							className="hover:border-black border-2 bg-emerald-700 font-bold text-white p-2 rounded-lg m-2 w-full"

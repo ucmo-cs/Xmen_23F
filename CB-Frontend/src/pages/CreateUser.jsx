@@ -4,8 +4,10 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import apiFetch from "../utils/apiFetch.js";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useQuery } from 'react-query';
+import apiFetch from "../utils/apiFetch"
+
 
 const schema = yup.object().shape({
     username: yup.string().required("Username is required"),
@@ -20,8 +22,6 @@ export default function Register() {
         register,
         handleSubmit,
         formState: { isValid },
-        setError,
-        clearErrors,
     } = useForm({
         resolver: yupResolver(schema),
     });
@@ -32,16 +32,11 @@ export default function Register() {
         console.log(data);
         const { userName, password, roles } = data;
 
-        // No need to handle confirmPassword here, it's already managed by the Yup schema.
-
         const registerUser = async () => {
             try {
-                // Use the provided data directly in the request payload
                 const response = await apiFetch("POST", "/api/v1/user", data);
 
-                // Check for a successful response before navigating
                 if (response.status === 200) {
-                    // Redirect to the login page after successful registration
                     navigate('/');
                 }
                 else if (data){
@@ -52,12 +47,14 @@ export default function Register() {
                 }
             } catch (error) {
                 console.error('Error during registration:', error);
-                // Display an error message or perform any necessary error handling
             }
         };
-
         registerUser();
+
     };
+    const signIn = () => {
+        navigate('/')
+    }
 
     return (
         <div className="min-h-screen flex justify-center items-center bg-emerald-700">
@@ -130,9 +127,9 @@ export default function Register() {
                         <label htmlFor="Registered" className="block text-gray-700 font-bold mb-2 text-lg">
                             Already registered?
                         </label>
-                        <a href="http://localhost:5173/" className="block text-gray-700 font-bold mb-2 text-lg underline">
+                        <button onClick={signIn} type="submit" className="block text-gray-700 font-bold mb-2 text-lg underline">
                             Sign In
-                        </a>
+                        </button>
                     </div>
                 </form>
             </div>
