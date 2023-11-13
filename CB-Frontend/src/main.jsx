@@ -18,8 +18,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 					<Routes>
 						<Route path="/" element={<Login />} />
 						<Route path="/dashboard" element={<Dashboard />} />
-						<Route path"/change-request/:id" element={<ChangeRequestPage />} />
-            <Route path="/createuser" element={<CreateUser />} />
+						<Route path="/change-request/:id" element={<ChangeRequestPage />} />
+                                                 <Route path="/createuser" element={<CreateUser />} />
 					</Routes>
 				</Suspense>
 			</BrowserRouter>
