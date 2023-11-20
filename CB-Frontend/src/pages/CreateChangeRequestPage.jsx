@@ -1,5 +1,5 @@
 import * as yup from "yup"
-import moment from "moment/moment.js"
+import dayjs from "dayjs"
 import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import React, { useEffect, useState } from "react"
@@ -17,7 +17,7 @@ function CreateChangeRequest() {
 				.required("End time cannot be empty")
 				.test("is-greater", "End time should be greater", function (value) {
 					const { start } = this.parent
-					return moment(value, "HH:mm").isSameOrAfter(moment(start, "HH:mm"))
+					return dayjs(value, "HH:mm").isSameOrAfter(dayjs(start, "HH:mm"))
 				}),
 		}),
 		date: yup.object().shape({
