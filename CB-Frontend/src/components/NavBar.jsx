@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 import CBNavImage from "@/assets/cblogowhite00c2aa7d.svg"
 
 function NavBar() {
@@ -14,9 +14,9 @@ function NavBar() {
 		<div>
 			<nav className="bg-green-800 relative">
 				<div className="max-w-screen flex flex-wrap items-center justify-between mx-auto p-4">
-					<a className="flex items-center">
+					<Link className="flex items-center" to={"/dashboard"}>
 						<img src={CBNavImage} alt="logo" className="h-12 mr-3" />
-					</a>
+					</Link>
 					<button
 						onClick={toggleNav}
 						className="inline-flex items-center p-2 w-12 h-12 justify-center text-sm text-gray-500 rounded-lg md:hidden focus:outline-none focus:ring-2 dark:text-gray-400"

@@ -4,7 +4,7 @@ import { useState } from "react"
 import * as yup from "yup"
 import { useForm } from "react-hook-form"
 import toast, { Toaster } from "react-hot-toast"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import apiFetch from "../utils/apiFetch"
 
 const schema = yup.object().shape({
@@ -42,7 +42,7 @@ export default function () {
 	}
 
 	const handleCreateUser = () => {
-		navigate('/createuser')
+		navigate("/createuser")
 	}
 
 	return (
@@ -86,19 +86,17 @@ export default function () {
 							className="block w-full p-2 text-gray-900 border-2 border-gray-400 rounded-lg bg-gray-50 outline-none sm:text-md"
 							placeholder="Enter your password"
 						/>
+						<Link
+							to="/register"
+							className="text-blue-500 font-semibold underline text-center block pt-5 ">
+							Register for an account
+						</Link>
 					</div>
 					<div className="flex justify-center items-center flex-col p-4">
 						<button
 							type="submit"
-							className="hover:border-black border-2 bg-emerald-700 font-bold text-white p-2 rounded-lg m-2 w-full"
-						>
+							className="hover:border-black border-2 bg-emerald-700 font-bold text-white p-2 rounded-lg m-2 w-full">
 							Login
-						</button>
-						<button
-							className="hover:border-black border-2 bg-emerald-700 font-bold text-white p-2 rounded-lg m-2 w-full"
-							onClick={handleCreateUser}
-						>
-							Create User
 						</button>
 					</div>
 				</form>
