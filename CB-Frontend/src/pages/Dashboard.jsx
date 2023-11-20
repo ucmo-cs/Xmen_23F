@@ -1,7 +1,7 @@
-import { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { Link, useNavigate } from "react-router-dom"
-import NavBar from "../components/NavBar"
+import NavBar from "@/components/NavBar.jsx"
 import apiFetch from "../utils/apiFetch"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
@@ -14,7 +14,7 @@ function Dashboard() {
 		queryFn: async () => {
 			const res = await apiFetch("GET", "/api/v1/change")
 			console.log(res.data)
-			return res.data
+			return res.data.content
 		},
 	})
 	const useNav = useNavigate()
@@ -27,6 +27,7 @@ function Dashboard() {
 			</div>
 		)
 	}
+	const navigate = useNavigate()
 
 	if (isLoading) {
 		//https://flowbite.com/docs/components/spinner/
@@ -60,46 +61,59 @@ function Dashboard() {
 		//	https://flowbite.com/docs/components/tables/
 		<div>
 			<NavBar />
-			<div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-				<table className="w-full text-sm text-left text-gray-500">
-					<thead className="text-xs text-gray-700 uppercase bg-gray-50">
-						<tr>
-							<th scope="col" className="px-6 py-3">
-								Id
-							</th>
-							<th scope="col" className="px-6 py-3">
-								Application Id
-							</th>
-							<th scope="col" className="px-6 py-3">
-								Change Type
-							</th>
-							<th scope="col" className="px-6 py-3">
-								Date
-							</th>
-						</tr>
-					</thead>
-					<tbody className="bg-white">
-						{data.content.map(change => (
-							<tr className="bg-white" key={change.id}>
-								<th
-									scope="row"
-									className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-									<Link to={`/change-request/${change.id}`}> {change.id} </Link>
-								</th>
-
-								<td
-									className="px-6 py-4			console.log(res.data)
- ">
-									{change.applicationId}
-								</td>
-								<td className="px-6 py-4 ">{change.changeType}</td>
-								<td className="px-6 py-4 ">
-									{dayjs(change.dateCreated).format("MM/DD/YYYY")}
-								</td>
-							</tr>
-						))}
-					</tbody>
-				</table>
+			<div className="flex flex-col m-10 sm: mx-4 opacity-75">
+				<div className="m-6 p-4 relative overflow-x-auto shadow-md sm:rounded-lg bg-slate-300">
+					<div className="inline-block min-w-full">
+						<div className="overflow-hidden">
+							<table className="w-full text-sm text-left text-gray-50">
+								<thead className="text-xs text-gray-700 uppercase bg-gray-50 t">
+									<tr className=" transition duration-200 ease-in-out">
+										<th
+											scope="col"
+											className="px-6 py-3 hover:bg-neutral-300 transition duration-300 ease-in-out">
+											Id
+										</th>
+										<th
+											scope="col"
+											className="px-6 py-3 hover:bg-neutral-300 transition duration-300 ease-in-out">
+											Application Id
+										</th>
+										<th
+											scope="col"
+											className="px-6 py-3 hover:bg-neutral-300 transition duration-300 ease-in-out">
+											Change Type
+										</th>
+										<th
+											scope="col"
+											className="px-6 py-3 hover:bg-neutral-300 transition duration-300 ease-in-out">
+											Date
+										</th>
+									</tr>
+								</thead>
+								<tbody className="bg-white">
+									{data.map(change => (
+										<tr className="bg-white" key={change.id}>
+											<th
+												scope="row"
+												className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+												{change.id}
+											</th>
+											<td className="px-6 py-4 text-black">
+												{change.applicationId}
+											</td>
+											<td className="px-6 py-4  text-black">
+												{change.changeType}
+											</td>
+											<td className="px-6 py-4 text-black ">
+												{dayjs(change.dateCreated).format("DD/MM/YYYY")}
+											</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	)
