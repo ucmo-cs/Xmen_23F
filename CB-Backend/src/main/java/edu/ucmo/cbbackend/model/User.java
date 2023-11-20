@@ -3,6 +3,8 @@ package edu.ucmo.cbbackend.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,14 +22,15 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
-public class User implements Serializable, UserDetails {
-
+public class User implements  UserDetails {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 
     @Column(nullable = false, unique = true, length = 20)
+    @NotEmpty
+    @NotBlank
     private String username;
 
     @JsonIgnore
