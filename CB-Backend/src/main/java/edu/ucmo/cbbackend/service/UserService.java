@@ -28,11 +28,11 @@ public class UserService implements UserDetailsService {
             throw new RuntimeException("User must have one role");
         }
 
-        if(rolesRepository.findByName(user.getRoles().getName().toUpperCase()) == null){
+        if(rolesRepository.findByNameIgnoreCase(user.getRoles().getName().toUpperCase()) == null){
             throw new RuntimeException("Role does not exist");
         }
 
-        user.setRoles(rolesRepository.findByName(user.getRoles().getName().toUpperCase()));
+        user.setRoles(rolesRepository.findByNameIgnoreCase(user.getRoles().getName().toUpperCase()));
         user.setPassword(passwordEncoder(user.getPassword()));
         userRepository.save(user);
         return user;

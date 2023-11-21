@@ -2,27 +2,28 @@ package edu.ucmo.cbbackend.service;
 
 import edu.ucmo.cbbackend.dto.request.ChangeRequestBodyDTO;
 import edu.ucmo.cbbackend.dto.response.ChangeRequestHttpResponseDTO;
-import edu.ucmo.cbbackend.model.ChangeRequest;
-import edu.ucmo.cbbackend.model.User;
+import edu.ucmo.cbbackend.model.*;
 import edu.ucmo.cbbackend.repository.ChangeRepository;
+import edu.ucmo.cbbackend.repository.RolesRepository;
 import edu.ucmo.cbbackend.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.Optional;
 
 @Service
 public class ChangeService {
 
-    ChangeRepository changeRepository;
+   private final ChangeRepository changeRepository;
     private final UserRepository userRepository;
+    private final RolesRepository roleRepository;
     public ChangeService(ChangeRepository changeRepository,
-                         UserRepository userRepository) {
+                         UserRepository userRepository, RolesRepository roleRepository) {
         this.changeRepository = changeRepository;
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
     }
 
     public ChangeRequest findById(Long id) {
@@ -38,16 +39,21 @@ public class ChangeService {
         changeRepository.save(changeRequest);
     }
 
- public Page<ChangeRequestHttpResponseDTO> findAllSortByDate(int page, int size, boolean showUsernames) {
-    Page<ChangeRequest> changeRequests = changeRepository.findAll(PageRequest.of(page, size, Sort.by("dateUpdated").descending()));
+ public Page<ChangeRequestHttpResponseDTO> findAllByRolesAndState(int page, int size, boolean showUsernames, Roles roles, ChangeRequestState state) {
+     Page<ChangeRequest> changeRequests = changeRepository.findByRoles_NameAndState(roles.getName(), state, PageRequest.of(page, size,  Sort.by("dateUpdated").descending()));
     return changeRequests.map(changeRequest -> toDto(changeRequest, showUsernames));
 }
 
-    public Page<ChangeRequestHttpResponseDTO> findAllByUserIdAndSortByDate(int page, int size, String username, boolean showUsernames) {
-        User user = userRepository.findByUsername(username);
+public Page<ChangeRequestHttpResponseDTO> findAllByState(int page, int size, boolean showUsernames, ChangeRequestState state) {
+        Page<ChangeRequest> changeRequests = changeRepository.findAllByState(state, PageRequest.of(page, size, Sort.by("dateUpdated").descending()));
+        return changeRequests.map(changeRequest -> toDto(changeRequest, showUsernames));
+    }
 
-        Page<ChangeRequest> changeRequestHttpResponses = changeRepository.findAllByAuthor(user, PageRequest.of(page, size, Sort.by("dateUpdated").descending()));
-         return changeRequestHttpResponses.map(changeRequest -> toDto(changeRequest, showUsernames));
+    public Page<ChangeRequestHttpResponseDTO> findAllByUserIdAndSortByDate(int page, int size, String username, boolean showUsernames, ChangeRequestState state) {
+        User user = userRepository.findByUsername(username);
+        // This is use for the USER ROLE to see all of their change requests
+        Page<ChangeRequest> changeRequestHttpResponses = changeRepository.findByAuthorAndState(user, state , PageRequest.of(page, size, Sort.by("dateUpdated").descending()));
+        return changeRequestHttpResponses.map(changeRequest -> toDto(changeRequest, showUsernames));
     }
 
     public ChangeRequestHttpResponseDTO toDto (ChangeRequest changeRequest, boolean showUsername){
@@ -67,7 +73,8 @@ public class ChangeService {
                 changeRequest.getImplementer(),
                 showUsername ? Optional.of(changeRequest.getAuthor().getUsername()) : Optional.empty(),
                 changeRequest.getRiskLevel(),
-                changeRequest.getRoles()
+                changeRequest.getRoles(),
+                changeRequest.getBackoutPlan()
         );
 
     }
@@ -76,5 +83,23 @@ public class ChangeService {
         return  changeRequestBodyDTO.getTimeWindowStart().after(changeRequestBodyDTO.getTimeWindowEnd());
     }
 
+    public Roles toRole(String role) {
+        //! ERROR Handling is need here
+        return roleRepository.findByNameIgnoreCase(role.toUpperCase());
     }
+
+    public ChangeRequestRiskLevel toRiskLevel(String riskLevel) {
+        //! ERROR Handling is need here
+        return ChangeRequestRiskLevel.valueOf(riskLevel.toUpperCase());
+    }
+
+    public ChangeRequestState toState(String state) {
+        //! ERROR Handling is need here
+        return ChangeRequestState.valueOf(state.toUpperCase());
+
+    }
+
+
+
+}
 

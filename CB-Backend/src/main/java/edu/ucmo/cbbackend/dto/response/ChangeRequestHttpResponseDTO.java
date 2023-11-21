@@ -44,4 +44,5 @@ public class ChangeRequestHttpResponseDTO implements Serializable {
     private Optional<String> authorUserName;
     private ChangeRequestRiskLevel riskLevel;
     private Roles roles;
+    private String backoutPlan;
 }

@@ -28,8 +28,7 @@ public class User implements  UserDetails {
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 20)
-    @NotEmpty
+    @Column(nullable = false, unique = true)
     @NotBlank
     private String username;
 

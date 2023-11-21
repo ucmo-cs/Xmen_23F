@@ -6,5 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 public interface RolesRepository extends CrudRepository<Roles, Long> {
 
 
-    Roles findByName(String name);
+    Roles findByNameIgnoreCase(String name);
+
+
 }

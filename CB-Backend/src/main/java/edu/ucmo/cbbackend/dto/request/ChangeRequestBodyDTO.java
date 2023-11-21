@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.logging.log4j.util.Strings;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -27,10 +28,10 @@ public class ChangeRequestBodyDTO implements Serializable {
     private Long applicationId;
     private String description;
     private String reason;
+    private String backoutPlan;
     @FutureOrPresent
     private Date dateCreated;
-    @FutureOrPresent
-    private Date dateUpdated;
+
     @Future
     private Date timeWindowStart;
     @Future
@@ -43,6 +44,8 @@ public class ChangeRequestBodyDTO implements Serializable {
     private Roles roles;
     private ChangeRequestRiskLevel riskLevel;
 
+
+
     public ChangeRequest toChangeRequest(UserRepository userRepository) {
         User user = userRepository.findById(authorId).orElseThrow(() -> new RuntimeException("User not found"));
         return ChangeRequest.builder()
@@ -52,13 +55,14 @@ public class ChangeRequestBodyDTO implements Serializable {
                 .description(description)
                 .reason(reason)
                 .dateCreated(dateCreated)
-                .dateUpdated(dateUpdated)
+                .dateUpdated(new Date())
                 .timeWindowStart(timeWindowStart)
                 .timeWindowEnd(timeWindowEnd)
                 .timeToRevert(timeToRevert)
                 .state(state)
                 .Implementer(Implementer)
                 .approveOrDeny(approveOrDeny)
+                .backoutPlan(backoutPlan)
                 .roles(roles)
                 .riskLevel(riskLevel)
                 .build();
