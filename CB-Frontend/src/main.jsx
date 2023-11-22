@@ -6,9 +6,9 @@ import Login from "./pages/Login.jsx"
 import "./index.css"
 import Dashboard from "./pages/Dashboard.jsx"
 import Providers from "./utils/Providers.jsx"
-import ChangeRequestPage from "./pages/ChangeRequestPage.jsx"
+import ChangeRequestPage from "./pages/CreateChangeRequestPage.jsx"
 import Register from "./pages/Register.jsx"
-import ABCD from "./pages/ChangeRequestPage.jsx";
+import ABCD from "./pages/CreateChangeRequestPage.jsx"
 
 ReactDOM.createRoot(document.getElementById("root")).render(
 	<React.StrictMode>

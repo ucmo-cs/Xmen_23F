@@ -46,26 +46,6 @@ public class ChangeRequestBodyDTO implements Serializable {
 
 
 
-    public ChangeRequest toChangeRequest(UserRepository userRepository) {
-        User user = userRepository.findById(authorId).orElseThrow(() -> new RuntimeException("User not found"));
-        return ChangeRequest.builder()
-                .author(user)
-                .changeType(changeType)
-                .applicationId(applicationId)
-                .description(description)
-                .reason(reason)
-                .dateCreated(dateCreated)
-                .dateUpdated(new Date())
-                .timeWindowStart(timeWindowStart)
-                .timeWindowEnd(timeWindowEnd)
-                .timeToRevert(timeToRevert)
-                .state(state)
-                .Implementer(Implementer)
-                .approveOrDeny(approveOrDeny)
-                .backoutPlan(backoutPlan)
-                .roles(roles)
-                .riskLevel(riskLevel)
-                .build();
-    }
+
 
 }

@@ -10,7 +10,7 @@ dayjs.extend(relativeTime)
 
 function Dashboard() {
 	const { data, isError, isLoading } = useQuery({
-		queryKey: ["dashboard"],
+		queryKey: ["changeRequest"],
 		queryFn: async () => {
 			const res = await apiFetch("GET", "/api/v1/change")
 			console.log(res.data)
@@ -63,10 +63,17 @@ function Dashboard() {
 			<NavBar />
 			<div className="flex flex-col m-10 sm: mx-4 opacity-75">
 				<div className="m-6 p-4 relative overflow-x-auto shadow-md sm:rounded-lg bg-slate-300">
+					<div className="flex items-center pb-4 gap-5">
+						<button className="text-white p-2 bg-gray-400">Application</button>
+						<button className="text-white p-2 bg-gray-400">Department</button>
+						<button className="text-white p-2 bg-gray-400"> Complete </button>
+						<button className="text-white p-2 bg-gray-400"> Frozen </button>
+					</div>
+
 					<div className="inline-block min-w-full">
 						<div className="overflow-hidden">
 							<table className="w-full text-sm text-left text-gray-50">
-								<thead className="text-xs text-gray-700 uppercase bg-gray-50 t">
+								<thead className="text-xs text-gray-700 uppercase bg-gray-50 ">
 									<tr className=" transition duration-200 ease-in-out">
 										<th
 											scope="col"

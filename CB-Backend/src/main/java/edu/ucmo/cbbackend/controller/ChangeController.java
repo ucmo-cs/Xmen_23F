@@ -149,9 +149,10 @@ public class ChangeController {
     public ResponseEntity<?> change(@RequestBody ChangeRequestBodyDTO change, HttpServletRequest request) {
         try {
             change.setApproveOrDeny(ChangeRequestApproveOrDeny.PENDING);
+            change.setState(ChangeRequestState.APPLICATION);
+            change.setDateCreated(new Date());
             change.setAuthorId(userService.userRepository.findByUsername(request.getUserPrincipal().getName()).getId());
-
-            ChangeRequest convertedChangeRequest = change.toChangeRequest(userService.userRepository);
+            ChangeRequest convertedChangeRequest = changeService.toEnity(change);
             changeService.save(convertedChangeRequest);
             ChangeRequestHttpResponseDTO changeRequestHttpResponse = changeService.toDto(convertedChangeRequest, false);
             return ResponseEntity.created(URI.create("/api/v1/change/" + changeRequestHttpResponse.getId())).body(changeRequestHttpResponse);
