@@ -30,8 +30,6 @@ export default function Register() {
 
 	const onSubmit = data => {
 		console.log(data)
-		const { userName, password, roles } = data
-
 		const registerUser = async () => {
 			try {
 				const response = await apiFetch("POST", "/api/v1/user", data)

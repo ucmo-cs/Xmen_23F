@@ -3,6 +3,7 @@ package edu.ucmo.cbbackend.controller;
 import edu.ucmo.cbbackend.dto.request.ChangeRequestBodyDTO;
 import edu.ucmo.cbbackend.dto.response.ChangeRequestHttpResponseDTO;
 import edu.ucmo.cbbackend.model.ChangeRequest;
+import edu.ucmo.cbbackend.model.ChangeRequestApproveOrDeny;
 import edu.ucmo.cbbackend.model.ChangeRequestState;
 import edu.ucmo.cbbackend.repository.RolesRepository;
 import edu.ucmo.cbbackend.service.ChangeService;
@@ -145,8 +146,11 @@ public class ChangeController {
 
     @SecurityRequirement(name = "jwtAuth")
     @PostMapping("/api/v1/change")
-    public ResponseEntity<?> change(@RequestBody ChangeRequestBodyDTO change) {
+    public ResponseEntity<?> change(@RequestBody ChangeRequestBodyDTO change, HttpServletRequest request) {
         try {
+            change.setApproveOrDeny(ChangeRequestApproveOrDeny.PENDING);
+            change.setAuthorId(userService.userRepository.findByUsername(request.getUserPrincipal().getName()).getId());
+
             ChangeRequest convertedChangeRequest = change.toChangeRequest(userService.userRepository);
             changeService.save(convertedChangeRequest);
             ChangeRequestHttpResponseDTO changeRequestHttpResponse = changeService.toDto(convertedChangeRequest, false);
