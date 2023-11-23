@@ -5,19 +5,27 @@ import NavBar from "@/components/NavBar.jsx"
 import apiFetch from "../utils/apiFetch"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
+import { useMutation, useQueryClient } from "react-query"
 
 dayjs.extend(relativeTime)
 
 function Dashboard() {
+	const [apiEndpoint, setApiEndpoint] = useState("/api/v1/change")
+
 	const { data, isError, isLoading } = useQuery({
 		queryKey: ["changeRequest"],
 		queryFn: async () => {
-			const res = await apiFetch("GET", "/api/v1/change")
+			const res = await apiFetch("GET", apiEndpoint)
 			console.log(res.data)
 			return res.data.content
 		},
 	})
-	const useNav = useNavigate()
+
+	const queryClient = useQueryClient()
+
+	const changeTab = async () => {
+		queryClient.invalidateQueries({ queryKey: ["changeRequest"] })
+	}
 
 	if (isError) {
 		return (
@@ -27,7 +35,6 @@ function Dashboard() {
 			</div>
 		)
 	}
-	const navigate = useNavigate()
 
 	if (isLoading) {
 		//https://flowbite.com/docs/components/spinner/
@@ -64,10 +71,31 @@ function Dashboard() {
 			<div className="flex flex-col m-10 sm: mx-4 opacity-75">
 				<div className="m-6 p-4 relative overflow-x-auto shadow-md sm:rounded-lg bg-slate-300">
 					<div className="flex items-center pb-4 gap-5">
-						<button className="text-white p-2 bg-gray-400">Application</button>
-						<button className="text-white p-2 bg-gray-400">Department</button>
+						<button
+							className="text-white p-2 bg-gray-400"
+							onClick={() => {
+								setApiEndpoint("/api/v1/change")
+							}}>
+							Application
+						</button>
+						<button
+							className="text-white p-2 bg-gray-400"
+							onClick={() => {
+								setApiEndpoint("/api/v1/change")
+							}}>
+							Department
+						</button>
 						<button className="text-white p-2 bg-gray-400"> Complete </button>
-						<button className="text-white p-2 bg-gray-400"> Frozen </button>
+						<button
+							className="text-white p-2 bg-gray-400"
+							onClick={() => {
+								setApiEndpoint(
+									"/api/v1/change?page=0&size=5&showAuthorUsername=false&state=FROZEN"
+								)
+								changeTab()
+							}}>
+							Frozen
+						</button>
 					</div>
 
 					<div className="inline-block min-w-full">
