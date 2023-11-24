@@ -5,27 +5,42 @@ import NavBar from "@/components/NavBar.jsx"
 import apiFetch from "../utils/apiFetch"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
-import { useMutation, useQueryClient } from "react-query"
-
+import { useQueryClient } from "@tanstack/react-query"
 dayjs.extend(relativeTime)
 
 function Dashboard() {
-	const [apiEndpoint, setApiEndpoint] = useState("/api/v1/change")
+	const [page, setPage] = useState(0)
+	const [size, setSize] = useState(5)
+	const [showAuthorUsername, setShowAuthorUsername] = useState(true)
+	const [state, setState] = useState("Application")
+
+	const fetchData = async (
+		page = 0,
+		size = 5,
+		showAuthorUsername = true,
+		state = "Application"
+	) => {
+		try {
+			const res = await apiFetch(
+				"GET",
+				`/api/v1/change?page=${page}&size=${size}&showAuthorUsername=${showAuthorUsername}&state=${state}`
+			)
+			console.log(res)
+			return res
+		} catch (err) {
+			console.log(err)
+		}
+	}
 
 	const { data, isError, isLoading } = useQuery({
-		queryKey: ["changeRequest"],
+		queryKey: ["changeRequest", state, page, size, showAuthorUsername],
 		queryFn: async () => {
-			const res = await apiFetch("GET", apiEndpoint)
+			const res = await fetchData(page, size, showAuthorUsername, state)
 			console.log(res.data)
 			return res.data.content
 		},
+		keepPreviousData: true,
 	})
-
-	const queryClient = useQueryClient()
-
-	const changeTab = async () => {
-		queryClient.invalidateQueries({ queryKey: ["changeRequest"] })
-	}
 
 	if (isError) {
 		return (
@@ -74,26 +89,33 @@ function Dashboard() {
 						<button
 							className="text-white p-2 bg-gray-400"
 							onClick={() => {
-								setApiEndpoint("/api/v1/change")
-							}}>
+								setState("Application")
+							}}
+							disabled={state === "Application"}>
 							Application
 						</button>
 						<button
 							className="text-white p-2 bg-gray-400"
 							onClick={() => {
-								setApiEndpoint("/api/v1/change")
-							}}>
+								setState("Department")
+							}}
+							disabled={state === "Department"}>
 							Department
 						</button>
-						<button className="text-white p-2 bg-gray-400"> Complete </button>
+						<button
+							className="text-white p-2 bg-gray-400 "
+							onClick={() => {
+								setState("Complete")
+							}}
+							disabled={state === "Complete"}>
+							Complete
+						</button>
 						<button
 							className="text-white p-2 bg-gray-400"
 							onClick={() => {
-								setApiEndpoint(
-									"/api/v1/change?page=0&size=5&showAuthorUsername=false&state=FROZEN"
-								)
-								changeTab()
-							}}>
+								setState("Frozen")
+							}}
+							disabled={state === "Frozen"}>
 							Frozen
 						</button>
 					</div>
@@ -112,6 +134,11 @@ function Dashboard() {
 											scope="col"
 											className="px-6 py-3 hover:bg-neutral-300 transition duration-300 ease-in-out">
 											Application Id
+										</th>
+										<th
+											className="px-6 py-3 hover:bg-neutral-300 transition duration-300 ease-in-out"
+											scope="col">
+											State
 										</th>
 										<th
 											scope="col"
@@ -136,6 +163,7 @@ function Dashboard() {
 											<td className="px-6 py-4 text-black">
 												{change.applicationId}
 											</td>
+											<td className="px-6 py-4 text-black">{change.state}</td>
 											<td className="px-6 py-4  text-black">
 												{change.changeType}
 											</td>
