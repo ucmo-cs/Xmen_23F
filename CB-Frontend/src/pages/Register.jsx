@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form"
 import toast, { Toaster } from "react-hot-toast"
 import { useNavigate } from "react-router-dom"
 import { yupResolver } from "@hookform/resolvers/yup"
-import { useQuery } from "react-query"
 import apiFetch from "../utils/apiFetch"
 
 const schema = yup.object().shape({
