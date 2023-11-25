@@ -5,25 +5,19 @@ import { yupResolver } from "@hookform/resolvers/yup"
 import React, { useState } from "react"
 import NavBar from "../components/NavBar.jsx"
 import apiFetch from "../utils/apiFetch.js"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import {
+	useMutation,
+	useQueryClient,
+	QueryClient,
+	QueryClientProvider,
+} from "@tanstack/react-query"
 import toast from "react-hot-toast"
-import { Link, useNavigate, useParams } from "react-router-dom"
-import LoadSpinner from "../components/LoadSpinner.jsx"
+import axios, { HttpStatusCode } from "axios"
+import { useNavigate } from "react-router-dom"
 
-const GrabChangeRequest = () => {
-	const nav = useNavigate()
+const ABCD = () => {
 	const queryClient = useQueryClient()
-	let { id } = useParams()
-
-	const [editChangeRequest, setEditChangeRequest] = useState(false)
-	const { isLoading, isError, data } = useQuery({
-		queryKey: ["SingleChangeRequest"],
-		queryFn: async () => {
-			const res = await apiFetch("GET", `/api/v1/change/${id}`, {}, {})
-			console.log(res)
-			return res.data
-		},
-	})
+	const nav = useNavigate()
 
 	const { mutateAsync } = useMutation({
 		mutationFn: async data => {
@@ -36,20 +30,10 @@ const GrabChangeRequest = () => {
 		},
 	})
 
-	if (isLoading) {
-		return <LoadSpinner />
-	}
-
-	return (
-		<CreateChangeRequest
-			mutate={mutateAsync}
-			editChangeRequest={editChangeRequest}
-			ChangeRequest={data}
-		/>
-	)
+	return <CreateChangeRequest mutate={mutateAsync} />
 }
 
-function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
+function CreateChangeRequest({ mutate }) {
 	const schema = yup.object().shape({
 		authorId: yup.number().required("Author ID is required"),
 		changeType: yup
@@ -86,6 +70,11 @@ function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
 		// resolver: yupResolver(schema),
 	})
 
+	const onSubmit = data => {
+		//mutation(data)
+		console.log(data)
+	}
+
 	return (
 		<div className="flex-wrap w-full">
 			<NavBar />
@@ -100,9 +89,7 @@ function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
 								required
 								{...register("changeType", { required: true })}
 								className="bg-slate-200 border border-gray-300 text-gray-900 font-medium rounded-lg p-2"
-								placeholder="Select Change Type"
-								disabled={editChangeRequest}
-								value={ChangeRequest.changeType}>
+								placeholder="Select Change Type">
 								<option disabled value="">
 									Select Change Type
 								</option>
@@ -117,8 +104,6 @@ function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
 							<input
 								type="number"
 								autoComplete="off"
-								disabled={editChangeRequest}
-								value={ChangeRequest.applicationId}
 								required
 								{...register("applicationId", { required: true })}
 								className="flex-box m-2 block p-2 text-gray-900 border-2 border-gray-400 rounded-lg bg-gray-50 outline-none sm:text-md"
@@ -134,11 +119,10 @@ function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
 								{...register("title", { required: true })}
 								className="flex-box m-2 block p-2 text-gray-900 border-2 border-gray-400 rounded-lg bg-gray-50 outline-none sm:text-md"
 								placeholder="Enter Title"
-								disabled={editChangeRequest}
 							/>
 						</div>
 
-						<div className=" p-2">
+						<div className="scheduleDATE/TIME p-2">
 							<div className="start flex items-center p-2">
 								<label className="m-2">Scheduled Start Date/Time:</label>
 								<input
@@ -146,10 +130,6 @@ function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
 									required
 									{...register("timeWindowStart", { required: true })}
 									className="flex-box m-2 block p-2 text-gray-900 border-2 border-gray-400 rounded-lg bg-gray-50 outline-none sm:text-md"
-									disabled={editChangeRequest}
-									value={dayjs(ChangeRequest.timeWindowStart).format(
-										"YYYY-MM-DDTHH:mm"
-									)}
 								/>
 							</div>
 							<div className="end flex items-center p-2">
@@ -159,10 +139,6 @@ function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
 									required
 									{...register("timeWindowEnd", { required: true })}
 									className="flex-box m-2 block p-2 text-gray-900 border-2 border-gray-400 rounded-lg bg-gray-50 outline-none sm:text-md"
-									disabled={editChangeRequest}
-									value={dayjs(ChangeRequest.timeWindowEnd).format(
-										"YYYY-MM-DDTHH:mm"
-									)}
 								/>
 							</div>
 						</div>
@@ -175,8 +151,6 @@ function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
 									className="flex-box resize-none m-2 w-full block p-2 text-gray-900 border-2 border-gray-400 rounded-lg bg-gray-50 outline-none sm:text-md"
 									required
 									{...register("description", { required: true })}
-									value={ChangeRequest.description}
-									disabled={editChangeRequest}
 								/>
 							</div>
 							<div className="reason">
@@ -185,8 +159,6 @@ function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
 									className="flex-box resize-none m-2 w-full block p-2 text-gray-900 border-2 border-gray-400 rounded-lg bg-gray-50 outline-none sm:text-md"
 									required
 									{...register("reason", { required: true })}
-									value={ChangeRequest.reason}
-									disabled={editChangeRequest}
 								/>
 							</div>
 							<div>
@@ -195,8 +167,6 @@ function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
 									className="flex-box resize-none m-2 w-full block p-2 text-gray-900 border-2 border-gray-400 rounded-lg bg-gray-50 outline-none sm:text-md"
 									required
 									{...register("backoutPlan", { required: true })}
-									value={ChangeRequest.backoutPlan}
-									disabled={editChangeRequest}
 								/>
 							</div>
 							<div className="flex items-center p-2">
@@ -207,12 +177,10 @@ function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
 									className="flex-box m-2 block p-2 text-gray-900 border-2 border-gray-400 rounded-lg bg-gray-50 outline-none sm:text-md"
 									required
 									{...register("timeToRevert", { required: true })}
-									disabled={editChangeRequest}
-									value={ChangeRequest.timeToRevert}
 								/>
 							</div>
-							<div className=" flex p-2">
-								<fieldset className="flex items-center p-2 ">
+							<div className="risk flex p-2">
+								<fieldset className="flex items-center p-2">
 									<label className="me-4">Risk Assessment:</label>
 									<div className="flex items-center me-4">
 										<input
@@ -221,8 +189,6 @@ function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
 											type="radio"
 											name="risk"
 											value="LOW"
-											defaultChecked={ChangeRequest.riskLevel === "LOW"}
-											disabled={editChangeRequest}
 											{...register("riskLevel", { required: true })}
 										/>
 										<label
@@ -236,10 +202,8 @@ function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
 											id="riskMed"
 											className="peer riskMed"
 											type="radio"
-											defaultChecked={ChangeRequest.riskLevel === "MEDIUM"}
 											name="risk"
 											value="MEDIUM"
-											disabled={editChangeRequest}
 											required
 											{...register("riskLevel", { required: true })}
 										/>
@@ -253,11 +217,9 @@ function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
 										<input
 											id="riskHigh"
 											className="peer riskHigh"
-											defaultChecked={ChangeRequest.riskLevel === "HIGH"}
 											type="radio"
 											name="risk"
 											value="HARD"
-											disabled={editChangeRequest}
 											required
 											{...register("riskLevel", { required: true })}
 										/>
@@ -272,11 +234,9 @@ function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
 						</div>
 						<div className="flex items-center justify-end">
 							<div className="Submit">
-								<Link
-									className="hover:border-black border-2  inline-block bg-gray-200 font-bold text-black p-2 rounded-lg m-2"
-									to="/dashboard">
+								<button className="hover:border-black border-2 bg-gray-200 font-bold text-black p-2 rounded-lg m-2">
 									Cancel
-								</Link>
+								</button>
 								<button
 									type="submit"
 									className="hover:border-black border-2 bg-gray-200 font-bold text-black p-2 rounded-lg m-2">
@@ -290,4 +250,4 @@ function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
 		</div>
 	)
 }
-export default GrabChangeRequest
+export default ABCD
