@@ -30,7 +30,8 @@ function NavBar() {
 				}`}>
 				<div className="max-w-screen flex flex-wrap items-center p-2 relative">
 					{/* Displayed on screens smaller than 768px */}
-					<a
+					<Link
+						to="/dashboard"
 						className={`${
 							innerWidth < 768 ? "flex" : "hidden"
 						} items-center mr-auto`}>
@@ -39,10 +40,11 @@ function NavBar() {
 							className="h-12 mr-3"
 							alt="Commerce Bank Logo"
 						/>
-					</a>
+					</Link>
 
 					{/* Displayed on screens 768px and larger */}
-					<a
+					<Link
+						to="/dashboard"
 						className={`${
 							innerWidth >= 768 ? "flex" : "hidden"
 						} items-center mr-auto`}>
@@ -51,7 +53,7 @@ function NavBar() {
 							className="h-12 mr-3"
 							alt="Commerce Bank Logo"
 						/>
-					</a>
+					</Link>
 
 					<div className="flex">
 						{/* "Submit Request" link */}

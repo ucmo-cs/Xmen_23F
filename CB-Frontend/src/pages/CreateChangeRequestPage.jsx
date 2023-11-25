@@ -270,17 +270,28 @@ function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
 								</fieldset>
 							</div>
 						</div>
-						<div className="flex items-center justify-end">
-							<div className="Submit">
+						<div className="flex flex-row justify-center mx-5">
+							<div>
 								<Link
-									className="hover:border-black border-2  inline-block bg-gray-200 font-bold text-black p-2 rounded-lg m-2"
+									className="hover:border-black border-2 inline-block bg-gray-200 font-bold text-black p-2 rounded-lg m-2"
 									to="/dashboard">
 									Cancel
 								</Link>
+
+								<button className="hover:border-black border-2 bg-gray-200 font-bold text-black p-2 rounded-lg m-2">
+									Deny
+								</button>
+
+								<button
+									onClick={() => {}}
+									className="hover:border-black border-2 bg-gray-200 font-bold text-black p-2 rounded-lg m-2">
+									Save
+								</button>
+
 								<button
 									type="submit"
 									className="hover:border-black border-2 bg-gray-200 font-bold text-black p-2 rounded-lg m-2">
-									Submit
+									Approve
 								</button>
 							</div>
 						</div>
