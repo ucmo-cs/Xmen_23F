@@ -8,7 +8,7 @@ import Dashboard from "./pages/Dashboard.jsx"
 import Providers from "./utils/Providers.jsx"
 import Register from "./pages/Register.jsx"
 import ABCD from "./pages/ChangeRequestPage.jsx"
-import GrabChangeRequest from "./pages/CreateChangeRequestPage.jsx"
+import GrabChangeRequest from "./pages/EditChangeRequestPage.jsx"
 
 ReactDOM.createRoot(document.getElementById("root")).render(
 	<React.StrictMode>
