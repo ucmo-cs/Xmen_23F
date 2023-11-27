@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom"
+import cblogowhite from "../assets/cblogowhite00c2aa7d.svg"
+import greenlogo from "../assets/greenlogo.png"
 
 function NavBar() {
 	const [showNav, setShowNav] = useState(false)
@@ -28,28 +30,30 @@ function NavBar() {
 				}`}>
 				<div className="max-w-screen flex flex-wrap items-center p-2 relative">
 					{/* Displayed on screens smaller than 768px */}
-					<a
+					<Link
+						to="/dashboard"
 						className={`${
 							innerWidth < 768 ? "flex" : "hidden"
 						} items-center mr-auto`}>
 						<img
-							src="whitelogo.svg"
+							src={cblogowhite}
 							className="h-12 mr-3"
 							alt="Commerce Bank Logo"
 						/>
-					</a>
+					</Link>
 
 					{/* Displayed on screens 768px and larger */}
-					<a
+					<Link
+						to="/dashboard"
 						className={`${
 							innerWidth >= 768 ? "flex" : "hidden"
 						} items-center mr-auto`}>
 						<img
-							src="greenlogo.png"
+							src={greenlogo}
 							className="h-12 mr-3"
 							alt="Commerce Bank Logo"
 						/>
-					</a>
+					</Link>
 
 					<div className="flex">
 						{/* "Submit Request" link */}

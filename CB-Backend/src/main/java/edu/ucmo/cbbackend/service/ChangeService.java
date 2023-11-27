@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -54,6 +55,28 @@ public Page<ChangeRequestHttpResponseDTO> findAllByState(int page, int size, boo
         // This is use for the USER ROLE to see all of their change requests
         Page<ChangeRequest> changeRequestHttpResponses = changeRepository.findByAuthorAndState(user, state , PageRequest.of(page, size, Sort.by("dateUpdated").descending()));
         return changeRequestHttpResponses.map(changeRequest -> toDto(changeRequest, showUsernames));
+    }
+
+    public ChangeRequest toEnity (ChangeRequestBodyDTO changeRequestBodyDTO) {
+            User user = userRepository.findById(changeRequestBodyDTO.getAuthorId()).orElseThrow(() -> new RuntimeException("User not found"));
+        return ChangeRequest.builder()
+                .author(user)
+                .changeType(changeRequestBodyDTO.getChangeType())
+                .applicationId(changeRequestBodyDTO.getApplicationId())
+                .description(changeRequestBodyDTO.getDescription())
+                .reason(changeRequestBodyDTO.getReason())
+                .dateCreated(changeRequestBodyDTO.getDateCreated())
+                .dateUpdated(new Date())
+                .timeWindowStart(changeRequestBodyDTO.getTimeWindowStart())
+                .timeWindowEnd(changeRequestBodyDTO.getTimeWindowEnd())
+                .timeToRevert(changeRequestBodyDTO.getTimeToRevert())
+                .state(changeRequestBodyDTO.getState())
+                .Implementer(changeRequestBodyDTO.getImplementer())
+                .approveOrDeny(changeRequestBodyDTO.getApproveOrDeny())
+                .backoutPlan(changeRequestBodyDTO.getBackoutPlan())
+                .roles(changeRequestBodyDTO.getRoles())
+                .riskLevel(changeRequestBodyDTO.getRiskLevel())
+                .build();
     }
 
     public ChangeRequestHttpResponseDTO toDto (ChangeRequest changeRequest, boolean showUsername){
