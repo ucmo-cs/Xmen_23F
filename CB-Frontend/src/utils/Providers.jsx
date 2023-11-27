@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
+// import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import { useRef } from "react"
 
 function Providers({ children }) {
@@ -12,7 +12,7 @@ function Providers({ children }) {
 	return (
 		<QueryClientProvider client={queryClientRef.current}>
 			{children}
-			<ReactQueryDevtools initialIsOpen={false} />
+			{/* <ReactQueryDevtools initialIsOpen={false} /> */}
 		</QueryClientProvider>
 	)
 }
