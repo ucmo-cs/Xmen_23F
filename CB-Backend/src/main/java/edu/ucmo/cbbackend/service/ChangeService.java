@@ -74,8 +74,8 @@ public Page<ChangeRequestHttpResponseDTO> findAllByState(int page, int size, boo
                 .Implementer(changeRequestBodyDTO.getImplementer())
                 .approveOrDeny(changeRequestBodyDTO.getApproveOrDeny())
                 .backoutPlan(changeRequestBodyDTO.getBackoutPlan())
-                .roles(changeRequestBodyDTO.getRoles())
-                .riskLevel(changeRequestBodyDTO.getRiskLevel())
+                .roles( determineChangeRequestNextRole(toRole(changeRequestBodyDTO.getRoles())))
+                .riskLevel(toRiskLevel(changeRequestBodyDTO.getRiskLevel()))
                 .build();
     }
 
@@ -108,12 +108,30 @@ public Page<ChangeRequestHttpResponseDTO> findAllByState(int page, int size, boo
 
     public Roles toRole(String role) {
         //! ERROR Handling is need here
+        Logger logger = Logger.getLogger(ChangeService.class.getName());
+        logger.info("Role: " + role);
         return roleRepository.findByNameIgnoreCase(role.toUpperCase());
     }
 
     public ChangeRequestRiskLevel toRiskLevel(String riskLevel) {
-        //! ERROR Handling is need here
-        return ChangeRequestRiskLevel.valueOf(riskLevel.toUpperCase());
+        if( riskLevel == null || riskLevel.isEmpty() || riskLevel.isBlank()){
+            return null;
+        }
+        if(riskLevel.equalsIgnoreCase("null")){
+            return null;
+        }
+        if (riskLevel.equalsIgnoreCase("HIGH") ){
+            return ChangeRequestRiskLevel.HIGH;
+        }
+        else if (riskLevel.equalsIgnoreCase("MEDIUM")){
+            return ChangeRequestRiskLevel.MEDIUM;
+        }
+        else if (riskLevel.equalsIgnoreCase("LOW")){
+            return ChangeRequestRiskLevel.LOW;
+        }
+        else {
+            return null;
+        }
     }
 
     public ChangeRequestState toState(String state) {
@@ -122,6 +140,18 @@ public Page<ChangeRequestHttpResponseDTO> findAllByState(int page, int size, boo
 
     }
 
+    public Roles determineChangeRequestNextRole(Roles roles) {
+        Logger logger = Logger.getLogger(ChangeService.class.getName());
+        logger.info("Role: " + roles.getName());
+        if (roles.getName().equalsIgnoreCase("USER")) {
+            return roleRepository.findByNameIgnoreCase("DEPARTMENT");
+        } else if (roles.getName().equalsIgnoreCase("DEPARTMENT")) {
+            return roleRepository.findByNameIgnoreCase("APPLICATION");
+        } else {
+            return roleRepository.findByNameIgnoreCase("OPERATIONS");
+        }
+
+    }
 
 
 }

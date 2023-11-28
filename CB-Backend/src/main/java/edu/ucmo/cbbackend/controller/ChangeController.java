@@ -73,13 +73,13 @@ public class ChangeController {
             if (changeRequestBody.getAuthorId() != null)
                 changeRequest.setAuthor(userService.loadUserById(changeRequestBody.getAuthorId()));
             if (changeRequestBody.getRoles() != null)
-                changeRequest.setRoles(changeRequestBody.getRoles());
+                changeRequest.setRoles(changeService.toRole(changeRequestBody.getRoles()));
             if (changeRequestBody.getApproveOrDeny() != null)
                 changeRequest.setApproveOrDeny(changeRequestBody.getApproveOrDeny());
             if (changeRequestBody.getState() != null)
                 changeRequest.setState(changeRequestBody.getState());
             if (changeRequestBody.getRiskLevel() != null)
-                changeRequest.setRiskLevel(changeRequestBody.getRiskLevel());
+                changeRequest.setRiskLevel(changeService.toRiskLevel(changeRequestBody.getRiskLevel()));
             if (changeRequestBody.getBackoutPlan() != null){
                 changeRequest.setBackoutPlan(changeRequestBody.getBackoutPlan());
             }
@@ -151,6 +151,7 @@ public class ChangeController {
             change.setApproveOrDeny(ChangeRequestApproveOrDeny.PENDING);
             change.setState(ChangeRequestState.APPLICATION);
             change.setDateCreated(new Date());
+            change.setRoles(userService.userRepository.findByUsername(request.getUserPrincipal().getName()).getRoles().getName());
             change.setAuthorId(userService.userRepository.findByUsername(request.getUserPrincipal().getName()).getId());
             ChangeRequest convertedChangeRequest = changeService.toEnity(change);
             changeService.save(convertedChangeRequest);

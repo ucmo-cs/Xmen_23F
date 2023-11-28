@@ -219,7 +219,7 @@ function CreateChangeRequest({ mutate }) {
 											className="peer riskHigh"
 											type="radio"
 											name="risk"
-											value="HARD"
+											value="High"
 											required
 											{...register("riskLevel", { required: true })}
 										/>

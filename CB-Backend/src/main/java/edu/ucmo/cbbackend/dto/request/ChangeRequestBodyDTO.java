@@ -41,8 +41,8 @@ public class ChangeRequestBodyDTO implements Serializable {
     private ChangeRequestApproveOrDeny approveOrDeny;
     private ChangeRequestState state;
     private String Implementer = "Not Assigned";
-    private Roles roles;
-    private ChangeRequestRiskLevel riskLevel;
+    private String roles;
+    private String riskLevel;
 
 
 
