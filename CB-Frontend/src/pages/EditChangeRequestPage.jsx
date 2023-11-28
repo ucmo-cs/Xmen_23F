@@ -57,7 +57,6 @@ function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
 			.oneOf(["PLANNED", "UNPLANNED", "EMERGENCY"])
 			.required("Change type is required"),
 		applicationId: yup.number().required("Application ID is required"),
-		title: yup.string().required("Title is required"),
 
 		timeWindowStart: yup.string().required("Both date and time is required"),
 		timeWindowEnd: yup.string().required("Both date and time is required"),
@@ -122,19 +121,6 @@ function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
 								required
 								{...register("applicationId", { required: true })}
 								className="flex-box m-2 block p-2 text-gray-900 border-2 border-gray-400 rounded-lg bg-gray-50 outline-none sm:text-md"
-							/>
-						</div>
-
-						<div className="title flex items-center p-2">
-							<label className="m-2">Title:</label>
-							<input
-								type="text"
-								autoComplete="off"
-								required
-								{...register("title", { required: true })}
-								className="flex-box m-2 block p-2 text-gray-900 border-2 border-gray-400 rounded-lg bg-gray-50 outline-none sm:text-md"
-								placeholder="Enter Title"
-								disabled={editChangeRequest}
 							/>
 						</div>
 

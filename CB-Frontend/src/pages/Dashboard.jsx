@@ -142,7 +142,7 @@ function Dashboard() {
 													{change.changeType}
 												</td>
 												<td className="px-6 py-4 text-black ">
-													{dayjs(change.dateCreated).format("DD/MM/YYYY")}
+													{dayjs(change.dateCreated).format("MM/DD/YYYY")}
 												</td>
 											</tr>
 										))}
