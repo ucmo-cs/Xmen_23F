@@ -108,8 +108,6 @@ public Page<ChangeRequestHttpResponseDTO> findAllByState(int page, int size, boo
 
     public Roles toRole(String role) {
         //! ERROR Handling is need here
-        Logger logger = Logger.getLogger(ChangeService.class.getName());
-        logger.info("Role: " + role);
         return roleRepository.findByNameIgnoreCase(role.toUpperCase());
     }
 
@@ -141,8 +139,6 @@ public Page<ChangeRequestHttpResponseDTO> findAllByState(int page, int size, boo
     }
 
     public Roles determineChangeRequestNextRole(Roles roles) {
-        Logger logger = Logger.getLogger(ChangeService.class.getName());
-        logger.info("Role: " + roles.getName());
         if (roles.getName().equalsIgnoreCase("USER")) {
             return roleRepository.findByNameIgnoreCase("DEPARTMENT");
         } else if (roles.getName().equalsIgnoreCase("DEPARTMENT")) {
