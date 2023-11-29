@@ -34,6 +34,38 @@ public class ChangeController {
     }
 
     @SecurityRequirement(name = "jwtAuth")
+    @PatchMapping("/api/v1/change/{id}")
+    public ResponseEntity<?> updateChangeRequestRole(@PathVariable Long id,  @RequestParam(defaultValue = "Approve") String ApproveOrDeny,  HttpServletRequest request){
+        
+        
+        ChangeRequest changeRequest = changeService.findById(id);
+
+        if (ApproveOrDeny.equalsIgnoreCase("Approve")){
+
+        logger.info("Change Request Role Updated:" + changeRequest.getRoles());
+        changeRequest.setRoles( changeService.determineChangeRequestNextRole( userService.userRepository.findByUsername(request.getUserPrincipal().getName()).getRoles() ));
+        logger.info("Change Request Role Updated:" + changeRequest.getRoles());
+        changeService.save(changeRequest);
+        ChangeRequestHttpResponseDTO changeRequestHttpResponse = changeService.toDto(changeRequest, false);
+        return ResponseEntity.ok().body(changeRequestHttpResponse);
+        }
+        else if (ApproveOrDeny.equalsIgnoreCase("Deny")){
+            changeRequest.setRoles( changeService.determineChangeRequestNextRole( userService.userRepository.findByUsername(request.getUserPrincipal().getName()).getRoles() ));
+            changeRequest.setApproveOrDeny(ChangeRequestApproveOrDeny.DENY);
+            changeService.toState("FROZEN");
+            changeService.save(changeRequest);
+            ChangeRequestHttpResponseDTO changeRequestHttpResponse = changeService.toDto(changeRequest, false);
+            return ResponseEntity.ok().body(changeRequestHttpResponse);
+        }
+        else{
+            return ResponseEntity.badRequest().body("Invalid Approve or Deny");
+        }
+
+
+    }
+
+
+    @SecurityRequirement(name = "jwtAuth")
     @PutMapping("/api/v1/change/{id}")
     public ResponseEntity<?> updateChangeById(@PathVariable Long id, @RequestBody ChangeRequestBodyDTO changeRequestBody) {
         try {
