@@ -10,6 +10,7 @@ import edu.ucmo.cbbackend.service.ChangeService;
 import edu.ucmo.cbbackend.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,7 @@ public class ChangeController {
     private final ChangeService changeService;
     private final RolesRepository rolesRepository;
 
+    private final Logger logger = org.slf4j.LoggerFactory.getLogger(ChangeController.class);
     public ChangeController(ChangeService changeService, UserService userService,
                             RolesRepository rolesRepository) {
         this.changeService = changeService;
@@ -34,13 +36,12 @@ public class ChangeController {
     }
 
     @SecurityRequirement(name = "jwtAuth")
-    @PatchMapping("/api/v1/change/{id}")
-    public ResponseEntity<?> updateChangeRequestRole(@PathVariable Long id,  @RequestParam(defaultValue = "Approve") String ApproveOrDeny,  HttpServletRequest request){
+    @PatchMapping("/api/v1/change/{id}/approve")
+    public ResponseEntity<?> updateChangeRequestRole(@PathVariable Long id, HttpServletRequest request){
         
         
         ChangeRequest changeRequest = changeService.findById(id);
 
-        if (ApproveOrDeny.equalsIgnoreCase("Approve")){
 
         logger.info("Change Request Role Updated:" + changeRequest.getRoles());
         changeRequest.setRoles( changeService.determineChangeRequestNextRole( userService.userRepository.findByUsername(request.getUserPrincipal().getName()).getRoles() ));
@@ -48,19 +49,21 @@ public class ChangeController {
         changeService.save(changeRequest);
         ChangeRequestHttpResponseDTO changeRequestHttpResponse = changeService.toDto(changeRequest, false);
         return ResponseEntity.ok().body(changeRequestHttpResponse);
-        }
-        else if (ApproveOrDeny.equalsIgnoreCase("Deny")){
-            changeRequest.setRoles( changeService.determineChangeRequestNextRole( userService.userRepository.findByUsername(request.getUserPrincipal().getName()).getRoles() ));
-            changeRequest.setApproveOrDeny(ChangeRequestApproveOrDeny.DENY);
-            changeService.toState("FROZEN");
-            changeService.save(changeRequest);
-            ChangeRequestHttpResponseDTO changeRequestHttpResponse = changeService.toDto(changeRequest, false);
-            return ResponseEntity.ok().body(changeRequestHttpResponse);
-        }
-        else{
-            return ResponseEntity.badRequest().body("Invalid Approve or Deny");
-        }
 
+
+
+    }
+
+
+    @SecurityRequirement(name = "jwtAuth")
+    @PatchMapping("/api/v1/change/{id}/deny")
+    public ResponseEntity<?> updateChangeRequestRoleDeny(@PathVariable Long id,   HttpServletRequest request) {
+        ChangeRequest changeRequest = changeService.findById(id);
+        changeRequest.setApproveOrDeny(ChangeRequestApproveOrDeny.DENIED);
+        changeRequest.setState(ChangeRequestState.FROZEN);
+        changeService.save(changeRequest);
+        ChangeRequestHttpResponseDTO changeRequestHttpResponse = changeService.toDto(changeRequest, false);
+        return ResponseEntity.ok().body(changeRequestHttpResponse);
 
     }
 

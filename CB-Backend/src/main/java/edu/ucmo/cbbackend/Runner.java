@@ -157,7 +157,7 @@ public class Runner implements CommandLineRunner {
                 } else if (random == 1){
                     approveOrDeny = ChangeRequestApproveOrDeny.PENDING;
                 } else {
-                    approveOrDeny = ChangeRequestApproveOrDeny.DENY;
+                    approveOrDeny = ChangeRequestApproveOrDeny.DENIED;
                 }
             random = (int) (Math.random() * 2);
 
