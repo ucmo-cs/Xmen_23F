@@ -36,7 +36,7 @@ public class ChangeController {
     }
 
     @SecurityRequirement(name = "jwtAuth")
-    @PatchMapping("/api/v1/change/{id}/approve")
+    @PatchMapping("/api/v1/change/{id}/approved")
     public ResponseEntity<?> updateChangeRequestRole(@PathVariable Long id, HttpServletRequest request){
         
         
@@ -56,7 +56,7 @@ public class ChangeController {
 
 
     @SecurityRequirement(name = "jwtAuth")
-    @PatchMapping("/api/v1/change/{id}/deny")
+    @PatchMapping("/api/v1/change/{id}/denied")
     public ResponseEntity<?> updateChangeRequestRoleDeny(@PathVariable Long id,   HttpServletRequest request) {
         ChangeRequest changeRequest = changeService.findById(id);
         changeRequest.setApproveOrDeny(ChangeRequestApproveOrDeny.DENIED);
