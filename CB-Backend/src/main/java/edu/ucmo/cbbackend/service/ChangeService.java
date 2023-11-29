@@ -61,7 +61,7 @@ public Page<ChangeRequestHttpResponseDTO> findAllByState(int page, int size, boo
             User user = userRepository.findById(changeRequestBodyDTO.getAuthorId()).orElseThrow(() -> new RuntimeException("User not found"));
         return ChangeRequest.builder()
                 .author(user)
-                .changeType(changeRequestBodyDTO.getChangeType())
+                .changeType(toChangeType(changeRequestBodyDTO.getChangeType()))
                 .applicationId(changeRequestBodyDTO.getApplicationId())
                 .description(changeRequestBodyDTO.getDescription())
                 .reason(changeRequestBodyDTO.getReason())
@@ -135,6 +135,11 @@ public Page<ChangeRequestHttpResponseDTO> findAllByState(int page, int size, boo
     public ChangeRequestState toState(String state) {
         //! ERROR Handling is need here
         return ChangeRequestState.valueOf(state.toUpperCase());
+
+    }
+    public ChangeType toChangeType(String changeType) {
+        //! ERROR Handling is need here
+        return ChangeType.valueOf(changeType.toUpperCase());
 
     }
 

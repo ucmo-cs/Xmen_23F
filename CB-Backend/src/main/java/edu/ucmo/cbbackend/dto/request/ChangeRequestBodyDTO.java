@@ -24,7 +24,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class ChangeRequestBodyDTO implements Serializable {
     private Long authorId;
-    private ChangeType changeType;
+    private String changeType;
     private Long applicationId;
     private String description;
     private String reason;

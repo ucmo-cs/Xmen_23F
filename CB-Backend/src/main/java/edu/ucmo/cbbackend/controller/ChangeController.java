@@ -5,6 +5,7 @@ import edu.ucmo.cbbackend.dto.response.ChangeRequestHttpResponseDTO;
 import edu.ucmo.cbbackend.model.ChangeRequest;
 import edu.ucmo.cbbackend.model.ChangeRequestApproveOrDeny;
 import edu.ucmo.cbbackend.model.ChangeRequestState;
+import edu.ucmo.cbbackend.model.User;
 import edu.ucmo.cbbackend.repository.RolesRepository;
 import edu.ucmo.cbbackend.service.ChangeService;
 import edu.ucmo.cbbackend.service.UserService;
@@ -78,7 +79,7 @@ public class ChangeController {
             if (changeRequestBody.getApplicationId() != null)
                 changeRequest.setApplicationId(changeRequestBody.getApplicationId());
             if (changeRequestBody.getChangeType() != null)
-                changeRequest.setChangeType(changeRequestBody.getChangeType());
+                changeRequest.setChangeType(changeService.toChangeType( changeRequestBody.getChangeType()));
             if (changeRequestBody.getDescription() != null)
                 changeRequest.setDescription(changeRequestBody.getDescription());
             if (changeRequestBody.getReason() != null)
@@ -186,8 +187,25 @@ public class ChangeController {
             change.setApproveOrDeny(ChangeRequestApproveOrDeny.PENDING);
             change.setState(ChangeRequestState.APPLICATION);
             change.setDateCreated(new Date());
-            change.setRoles(userService.userRepository.findByUsername(request.getUserPrincipal().getName()).getRoles().getName());
-            change.setAuthorId(userService.userRepository.findByUsername(request.getUserPrincipal().getName()).getId());
+            if (change.getAuthorId() == null) {
+                change.setRoles(userService.userRepository.findByUsername(request.getUserPrincipal().getName()).getRoles().getName());
+                change.setAuthorId(userService.userRepository.findByUsername(request.getUserPrincipal().getName()).getId());
+            }
+            else {
+                try {
+                    User user = userService.loadUserById(change.getAuthorId());
+                } catch (Exception e) {
+                    return ResponseEntity.badRequest().body("User does not exist");
+                }
+                User user = userService.loadUserById(change.getAuthorId());
+                change.setRoles(user.getRoles().getName());
+            }
+            try {
+                changeService.toChangeType(change.getChangeType());
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().body("Change Type does not exist");
+            }
+
             ChangeRequest convertedChangeRequest = changeService.toEnity(change);
             changeService.save(convertedChangeRequest);
             ChangeRequestHttpResponseDTO changeRequestHttpResponse = changeService.toDto(convertedChangeRequest, false);

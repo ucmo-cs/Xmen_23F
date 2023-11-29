@@ -2,7 +2,7 @@ import * as yup from "yup"
 import dayjs from "dayjs"
 import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import NavBar from "../components/NavBar.jsx"
 import apiFetch from "../utils/apiFetch.js"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
@@ -36,20 +36,56 @@ const GrabChangeRequest = () => {
 		},
 	})
 
+	const { mutateAsync: ApproveChangeRequest } = useMutation({
+		mutationFn: async data => {
+			const res = await apiFetch("PATCH", `/api/v1/change/${id}/approved`, {})
+			console.log(res)
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["changeRequest"] })
+			nav("/dashboard")
+		},
+		onError: () => {
+			toast.error("Something went wrong")
+		},
+	})
+
+	const { mutateAsync: denyChangeRequest } = useMutation({
+		mutationFn: async data => {
+			const res = await apiFetch("PATCH", `/api/v1/change/${id}/denied`, {})
+			console.log(res)
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["changeRequest"] })
+			nav("/dashboard")
+		},
+		onError: () => {
+			toast.error("Something went wrong")
+		},
+	})
+
 	if (isLoading) {
 		return <LoadSpinner />
 	}
 
 	return (
 		<CreateChangeRequest
-			mutate={mutateAsync}
+			approveChangeRequest={ApproveChangeRequest}
+			saveChangeRequest={mutateAsync}
 			editChangeRequest={editChangeRequest}
 			ChangeRequest={data}
+			denyChangeRequest={denyChangeRequest}
 		/>
 	)
 }
 
-function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
+function CreateChangeRequest({
+	approveChangeRequest,
+	editChangeRequest,
+	saveChangeRequest,
+	ChangeRequest,
+	denyChangeRequest,
+}) {
 	const schema = yup.object().shape({
 		authorId: yup.number().required("Author ID is required"),
 		changeType: yup
@@ -81,9 +117,21 @@ function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
 		implementer: yup.string().required("Implementer is required"),
 	})
 
-	const { register, handleSubmit } = useForm({
+	const { register, handleSubmit, setValue } = useForm({
 		// resolver: yupResolver(schema),
 	})
+
+	useEffect(() => {
+		setValue("authorId", ChangeRequest.authorId)
+		setValue("changeType", ChangeRequest.changeType)
+		setValue("applicationId", ChangeRequest.applicationId)
+		setValue("timeWindowStart", ChangeRequest.timeWindowStart)
+		setValue("timeWindowEnd", ChangeRequest.timeWindowEnd)
+		setValue("description", ChangeRequest.description)
+		setValue("reason", ChangeRequest.reason)
+		setValue("backoutPlan", ChangeRequest.backoutPlan)
+		setValue("timeToRevert", ChangeRequest.timeToRevert)
+	}, [saveChangeRequest])
 
 	return (
 		<div className="flex-wrap w-full">
@@ -91,7 +139,9 @@ function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
 
 			<div className="p-4 rounded-full">
 				<div>
-					<form onSubmit={handleSubmit(mutate)} className="Form px-4">
+					<form
+						onSubmit={handleSubmit(approveChangeRequest)}
+						className="Form px-4">
 						<div className="changeType flex items-center p-2">
 							<label className="m-2">Change Type:</label>
 							<select
@@ -99,12 +149,8 @@ function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
 								required
 								{...register("changeType", { required: true })}
 								className="bg-slate-200 border border-gray-300 text-gray-900 font-medium rounded-lg p-2"
-								placeholder="Select Change Type"
-								disabled={editChangeRequest}
-								value={ChangeRequest.changeType}>
-								<option disabled value="">
-									Select Change Type
-								</option>
+								placeholder="Select Change Type">
+								<option value="">Select Change Type</option>
 								<option value="PLANNED">Planned</option>
 								<option value="UNPLANNED">Unplanned</option>
 								<option value="EMERGENCY">Emergency</option>
@@ -116,7 +162,6 @@ function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
 							<input
 								type="number"
 								autoComplete="off"
-								disabled={editChangeRequest}
 								value={ChangeRequest.applicationId}
 								required
 								{...register("applicationId", { required: true })}
@@ -132,7 +177,6 @@ function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
 									required
 									{...register("timeWindowStart", { required: true })}
 									className="flex-box m-2 block p-2 text-gray-900 border-2 border-gray-400 rounded-lg bg-gray-50 outline-none sm:text-md"
-									disabled={editChangeRequest}
 									value={dayjs(ChangeRequest.timeWindowStart).format(
 										"YYYY-MM-DDTHH:mm"
 									)}
@@ -145,7 +189,6 @@ function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
 									required
 									{...register("timeWindowEnd", { required: true })}
 									className="flex-box m-2 block p-2 text-gray-900 border-2 border-gray-400 rounded-lg bg-gray-50 outline-none sm:text-md"
-									disabled={editChangeRequest}
 									value={dayjs(ChangeRequest.timeWindowEnd).format(
 										"YYYY-MM-DDTHH:mm"
 									)}
@@ -162,7 +205,6 @@ function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
 									required
 									{...register("description", { required: true })}
 									value={ChangeRequest.description}
-									disabled={editChangeRequest}
 								/>
 							</div>
 							<div className="reason">
@@ -172,7 +214,6 @@ function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
 									required
 									{...register("reason", { required: true })}
 									value={ChangeRequest.reason}
-									disabled={editChangeRequest}
 								/>
 							</div>
 							<div>
@@ -182,7 +223,6 @@ function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
 									required
 									{...register("backoutPlan", { required: true })}
 									value={ChangeRequest.backoutPlan}
-									disabled={editChangeRequest}
 								/>
 							</div>
 							<div className="flex items-center p-2">
@@ -193,7 +233,6 @@ function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
 									className="flex-box m-2 block p-2 text-gray-900 border-2 border-gray-400 rounded-lg bg-gray-50 outline-none sm:text-md"
 									required
 									{...register("timeToRevert", { required: true })}
-									disabled={editChangeRequest}
 									value={ChangeRequest.timeToRevert}
 								/>
 							</div>
@@ -208,7 +247,6 @@ function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
 											name="risk"
 											value="LOW"
 											defaultChecked={ChangeRequest.riskLevel === "LOW"}
-											disabled={editChangeRequest}
 											{...register("riskLevel", { required: true })}
 										/>
 										<label
@@ -225,7 +263,6 @@ function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
 											defaultChecked={ChangeRequest.riskLevel === "MEDIUM"}
 											name="risk"
 											value="MEDIUM"
-											disabled={editChangeRequest}
 											required
 											{...register("riskLevel", { required: true })}
 										/>
@@ -243,7 +280,6 @@ function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
 											type="radio"
 											name="risk"
 											value="HARD"
-											disabled={editChangeRequest}
 											required
 											{...register("riskLevel", { required: true })}
 										/>
@@ -264,12 +300,18 @@ function CreateChangeRequest({ mutate, editChangeRequest, ChangeRequest }) {
 									Cancel
 								</Link>
 
-								<button className="hover:border-black border-2 bg-gray-200 font-bold text-black p-2 rounded-lg m-2">
+								<button
+									className="hover:border-black border-2 bg-gray-200 font-bold text-black p-2 rounded-lg m-2"
+									onClick={() => {
+										denyChangeRequest()
+									}}>
 									Deny
 								</button>
 
 								<button
-									onClick={() => {}}
+									onClick={() => {
+										saveChangeRequest()
+									}}
 									className="hover:border-black border-2 bg-gray-200 font-bold text-black p-2 rounded-lg m-2">
 									Save
 								</button>
