@@ -74,51 +74,8 @@ public class ChangeController {
     public ResponseEntity<?> updateChangeById(@PathVariable Long id, @RequestBody ChangeRequestBodyDTO changeRequestBody) {
         try {
             ChangeRequest changeRequest = changeService.findById(id);
-            if (changeRequest == null)
-                return ResponseEntity.badRequest().body("Change Request does not exist");
-            if (changeRequestBody.getApplicationId() != null)
-                changeRequest.setApplicationId(changeRequestBody.getApplicationId());
-            if (changeRequestBody.getChangeType() != null)
-                changeRequest.setChangeType(changeService.toChangeType( changeRequestBody.getChangeType()));
-            if (changeRequestBody.getDescription() != null)
-                changeRequest.setDescription(changeRequestBody.getDescription());
-            if (changeRequestBody.getReason() != null)
-                changeRequest.setReason(changeRequestBody.getReason());
-            if (changeRequestBody.getTimeWindowStart() != null) {
-                changeRequest.setTimeWindowStart(changeRequestBody.getTimeWindowStart());
-                if (!changeService.changeRequestDateValidation(changeRequestBody)) {
-                    return ResponseEntity.badRequest().body("Date needs to be validate date time range");
-                }
-            }
-            if (changeRequestBody.getTimeWindowEnd() != null) {
-                changeRequest.setTimeWindowEnd(changeRequestBody.getTimeWindowEnd());
-                if (!changeService.changeRequestDateValidation(changeRequestBody)) {
-                    return ResponseEntity.badRequest().body("Date needs to be validate date time range");
-                }
-            }
-            if (changeRequestBody.getState() != null)
-                changeRequest.setState(changeRequestBody.getState());
-            if (changeRequestBody.getImplementer() != null)
-                changeRequest.setImplementer(changeRequestBody.getImplementer());
-            if (changeRequestBody.getApproveOrDeny() != null)
-                changeRequest.setApproveOrDeny(changeRequestBody.getApproveOrDeny());
-            if (changeRequestBody.getTimeToRevert() != null)
-                changeRequest.setTimeToRevert(changeRequestBody.getTimeToRevert());
-            if (changeRequestBody.getDateCreated() != null)
-                changeRequest.setDateCreated(changeRequestBody.getDateCreated());
-            if (changeRequestBody.getAuthorId() != null)
-                changeRequest.setAuthor(userService.loadUserById(changeRequestBody.getAuthorId()));
-            if (changeRequestBody.getRoles() != null)
-                changeRequest.setRoles(changeService.toRole(changeRequestBody.getRoles()));
-            if (changeRequestBody.getApproveOrDeny() != null)
-                changeRequest.setApproveOrDeny(changeRequestBody.getApproveOrDeny());
-            if (changeRequestBody.getState() != null)
-                changeRequest.setState(changeRequestBody.getState());
-            if (changeRequestBody.getRiskLevel() != null)
-                changeRequest.setRiskLevel(changeService.toRiskLevel(changeRequestBody.getRiskLevel()));
-            if (changeRequestBody.getBackoutPlan() != null){
-                changeRequest.setBackoutPlan(changeRequestBody.getBackoutPlan());
-            }
+            ChangeRequest x = changeService.toEnity(changeRequestBody);
+            x.setDateCreated(changeRequest.getDateCreated());
 
              changeRequest.setDateUpdated(new Date());
             changeService.save(changeRequest);

@@ -27,7 +27,7 @@ const GrabChangeRequest = () => {
 
 	const { mutateAsync } = useMutation({
 		mutationFn: async data => {
-			const res = await apiFetch("POST", "/api/v1/change", data, {})
+			const res = await apiFetch("PUT", `/api/v1/change/${id}`, data, {})
 			console.log(res)
 		},
 		onSuccess: () => {
@@ -131,6 +131,7 @@ function CreateChangeRequest({
 		setValue("reason", ChangeRequest.reason)
 		setValue("backoutPlan", ChangeRequest.backoutPlan)
 		setValue("timeToRevert", ChangeRequest.timeToRevert)
+		setValue("implementer", ChangeRequest.implementer)
 	}, [saveChangeRequest])
 
 	return (
@@ -162,9 +163,20 @@ function CreateChangeRequest({
 							<input
 								type="number"
 								autoComplete="off"
-								value={ChangeRequest.applicationId}
+								defaultValue={ChangeRequest.applicationId}
 								required
 								{...register("applicationId", { required: true })}
+								className="flex-box m-2 block p-2 text-gray-900 border-2 border-gray-400 rounded-lg bg-gray-50 outline-none sm:text-md"
+							/>
+						</div>
+
+						<div className="implementer flex items-center p-2">
+							<label className="m-2">Implementer:</label>
+							<input
+								type="input"
+								autoComplete="off"
+								required
+								{...register("implementer", { required: true })}
 								className="flex-box m-2 block p-2 text-gray-900 border-2 border-gray-400 rounded-lg bg-gray-50 outline-none sm:text-md"
 							/>
 						</div>
@@ -204,7 +216,6 @@ function CreateChangeRequest({
 									className="flex-box resize-none m-2 w-full block p-2 text-gray-900 border-2 border-gray-400 rounded-lg bg-gray-50 outline-none sm:text-md"
 									required
 									{...register("description", { required: true })}
-									value={ChangeRequest.description}
 								/>
 							</div>
 							<div className="reason">
@@ -213,7 +224,6 @@ function CreateChangeRequest({
 									className="flex-box resize-none m-2 w-full block p-2 text-gray-900 border-2 border-gray-400 rounded-lg bg-gray-50 outline-none sm:text-md"
 									required
 									{...register("reason", { required: true })}
-									value={ChangeRequest.reason}
 								/>
 							</div>
 							<div>
@@ -222,7 +232,6 @@ function CreateChangeRequest({
 									className="flex-box resize-none m-2 w-full block p-2 text-gray-900 border-2 border-gray-400 rounded-lg bg-gray-50 outline-none sm:text-md"
 									required
 									{...register("backoutPlan", { required: true })}
-									value={ChangeRequest.backoutPlan}
 								/>
 							</div>
 							<div className="flex items-center p-2">
@@ -233,7 +242,6 @@ function CreateChangeRequest({
 									className="flex-box m-2 block p-2 text-gray-900 border-2 border-gray-400 rounded-lg bg-gray-50 outline-none sm:text-md"
 									required
 									{...register("timeToRevert", { required: true })}
-									value={ChangeRequest.timeToRevert}
 								/>
 							</div>
 							<div className=" flex p-2">

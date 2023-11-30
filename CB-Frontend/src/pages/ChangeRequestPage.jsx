@@ -109,6 +109,17 @@ function CreateChangeRequest({ mutate }) {
 							/>
 						</div>
 
+						<div className="implementer flex items-center p-2">
+							<label className="m-2">Implementer:</label>
+							<input
+								type="input"
+								autoComplete="off"
+								required
+								{...register("implementer", { required: true })}
+								className="flex-box m-2 block p-2 text-gray-900 border-2 border-gray-400 rounded-lg bg-gray-50 outline-none sm:text-md"
+							/>
+						</div>
+
 						<div className="scheduleDATE/TIME p-2">
 							<div className="start flex items-center p-2">
 								<label className="m-2">Scheduled Start Date/Time:</label>
