@@ -71,15 +71,29 @@ public class ChangeController {
 
     @SecurityRequirement(name = "jwtAuth")
     @PutMapping("/api/v1/change/{id}")
-    public ResponseEntity<?> updateChangeById(@PathVariable Long id, @RequestBody ChangeRequestBodyDTO changeRequestBody) {
+    public ResponseEntity<?> updateChangeById(@PathVariable Long id, @RequestBody ChangeRequestBodyDTO changeRequestBody, HttpServletRequest request) {
         try {
             ChangeRequest changeRequest = changeService.findById(id);
-            ChangeRequest x = changeService.toEnity(changeRequestBody);
-            x.setDateCreated(changeRequest.getDateCreated());
 
-             changeRequest.setDateUpdated(new Date());
-            changeService.save(changeRequest);
-            ChangeRequestHttpResponseDTO changeRequestHttpResponse = changeService.toDto(changeRequest, false);
+            if (changeRequestBody.getRoles() == null) {
+                changeRequestBody.setRoles(userService.loadUserByUsername(request.getUserPrincipal().getName()).getRoles().getName());
+            }
+
+
+            logger.info("Change Request Role Updated:" + changeRequest.getRoles());
+
+            ChangeRequest x = changeService.toEnity(changeRequestBody);
+            if (changeRequestBody.getApproveOrDeny() == null) {
+                x.setApproveOrDeny(changeRequest.getApproveOrDeny());
+            }
+            if (changeRequestBody.getState() == null) {
+                x.setState(changeRequest.getState());
+            }
+            x.setId(changeRequest.getId());
+            x.setDateCreated(changeRequest.getDateCreated());
+            changeRequest.setDateUpdated(new Date());
+            changeService.save(x);
+            ChangeRequestHttpResponseDTO changeRequestHttpResponse = changeService.toDto(x, false);
             return ResponseEntity.ok().body(changeRequestHttpResponse);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.toString());
@@ -163,7 +177,10 @@ public class ChangeController {
                 return ResponseEntity.badRequest().body("Change Type does not exist");
             }
 
+
             ChangeRequest convertedChangeRequest = changeService.toEnity(change);
+            convertedChangeRequest.setRoles(changeService.determineChangeRequestNextRole(convertedChangeRequest.getRoles()));
+
             changeService.save(convertedChangeRequest);
             ChangeRequestHttpResponseDTO changeRequestHttpResponse = changeService.toDto(convertedChangeRequest, false);
             return ResponseEntity.created(URI.create("/api/v1/change/" + changeRequestHttpResponse.getId())).body(changeRequestHttpResponse);

@@ -74,7 +74,7 @@ public Page<ChangeRequestHttpResponseDTO> findAllByState(int page, int size, boo
                 .Implementer(changeRequestBodyDTO.getImplementer())
                 .approveOrDeny(changeRequestBodyDTO.getApproveOrDeny())
                 .backoutPlan(changeRequestBodyDTO.getBackoutPlan())
-                .roles( determineChangeRequestNextRole(toRole(changeRequestBodyDTO.getRoles())))
+                .roles( toRole(changeRequestBodyDTO.getRoles()))
                 .riskLevel(toRiskLevel(changeRequestBodyDTO.getRiskLevel()))
                 .build();
     }

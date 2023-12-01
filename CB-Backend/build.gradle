@@ -20,6 +20,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'net.datafaker:datafaker:2.0.2'
+    testImplementation 'org.projectlombok:lombok:1.18.28'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     implementation "me.paulschwarz:spring-dotenv:4.0.0"

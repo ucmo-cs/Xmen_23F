@@ -78,7 +78,7 @@ public class ChangeRequest implements Serializable {
     @Column(nullable = false)
     private Long timeToRevert;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     @Enumerated(EnumType.STRING)
     private ChangeRequestApproveOrDeny approveOrDeny;
 
@@ -101,6 +101,5 @@ public class ChangeRequest implements Serializable {
     @Column(nullable = false, columnDefinition = "BLOB")
     @Lob
     private String backoutPlan;
-
 
 }
