@@ -44,7 +44,16 @@ public class ChangeController {
         ChangeRequest changeRequest = changeService.findById(id);
 
 
+
         logger.info("Change Request Role Updated:" + changeRequest.getRoles());
+        if(changeRequest.getRoles().getName().equalsIgnoreCase("OPERATIONS")){
+            changeRequest.setApproveOrDeny(ChangeRequestApproveOrDeny.APPROVE);
+            changeRequest.setState(ChangeRequestState.COMPLETE);
+            changeRequest.setRoles(rolesRepository.findByNameIgnoreCase("OPERATIONS"));
+            changeService.save(changeRequest);
+            ChangeRequestHttpResponseDTO changeRequestHttpResponse = changeService.toDto(changeRequest, false);
+            return ResponseEntity.ok().body(changeRequestHttpResponse);
+        }
         changeRequest.setRoles( changeService.determineChangeRequestNextRole( userService.userRepository.findByUsername(request.getUserPrincipal().getName()).getRoles() ));
         logger.info("Change Request Role Updated:" + changeRequest.getRoles());
         changeService.save(changeRequest);
@@ -73,6 +82,8 @@ public class ChangeController {
     @PutMapping("/api/v1/change/{id}")
     public ResponseEntity<?> updateChangeById(@PathVariable Long id, @RequestBody ChangeRequestBodyDTO changeRequestBody, HttpServletRequest request) {
         try {
+
+            ChangeRequest changeRequest = changeService.findById(id);
 
             if (changeRequestBody.getRoles() == null) {
                 changeRequestBody.setRoles(userService.loadUserByUsername(request.getUserPrincipal().getName()).getRoles().getName());

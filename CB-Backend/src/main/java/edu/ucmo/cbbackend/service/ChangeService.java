@@ -148,8 +148,14 @@ public Page<ChangeRequestHttpResponseDTO> findAllByState(int page, int size, boo
             return roleRepository.findByNameIgnoreCase("DEPARTMENT");
         } else if (roles.getName().equalsIgnoreCase("DEPARTMENT")) {
             return roleRepository.findByNameIgnoreCase("APPLICATION");
-        } else {
+        } else if (roles.getName().equalsIgnoreCase("APPLICATION")) {
             return roleRepository.findByNameIgnoreCase("OPERATIONS");
+        }
+        else if (roles.getName().equalsIgnoreCase("OPERATIONS")) {
+            return roleRepository.findByNameIgnoreCase("OPERATIONS");
+        }
+        else {
+            return null;
         }
 
     }
