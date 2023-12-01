@@ -146,10 +146,10 @@ public class ChangeController {
         if(state != null){
             changeRequestState = changeService.toState(state);
         }
-        if (userService.userRepository.findByUsername(request.getUserPrincipal().getName()).getRoles().equals(rolesRepository.findByNameIgnoreCase("USER"))) {
-            Page<ChangeRequestHttpResponseDTO> list = changeService.findAllByUserIdAndSortByDate(page, size, request.getUserPrincipal().getName(), showAuthorUsername, changeRequestState);
-            return ResponseEntity.ok().body(list);
-        }
+//        if (userService.userRepository.findByUsername(request.getUserPrincipal().getName()).getRoles().equals(rolesRepository.findByNameIgnoreCase("USER"))) {
+//            Page<ChangeRequestHttpResponseDTO> list = changeService.findAllByUserIdAndSortByDate(page, size, request.getUserPrincipal().getName(), showAuthorUsername, changeRequestState);
+//            return ResponseEntity.ok().body(list);
+//        }
         if( userService.userRepository.findByUsername(request.getUserPrincipal().getName()).getRoles().equals(rolesRepository.findByNameIgnoreCase("OPERATIONS"))){
             Page<ChangeRequestHttpResponseDTO> list = changeService.findAllByState(page, size, showAuthorUsername, changeRequestState);
             return ResponseEntity.ok().body(list);
@@ -189,7 +189,7 @@ public class ChangeController {
 
 
             ChangeRequest convertedChangeRequest = changeService.toEnity(change);
-            convertedChangeRequest.setRoles(changeService.determineChangeRequestNextRole(convertedChangeRequest.getRoles()));
+            convertedChangeRequest.setRoles(convertedChangeRequest.getRoles());
 
             changeService.save(convertedChangeRequest);
             ChangeRequestHttpResponseDTO changeRequestHttpResponse = changeService.toDto(convertedChangeRequest, false);
