@@ -109,6 +109,10 @@ function Dashboard() {
 												scope="col">
 												State
 											</th>
+											<th className="px-6 py-3 hover:bg-neutral-300 transition duration-300 ease-in-out">
+												Role Type
+											</th>
+
 											<th
 												scope="col"
 												className="px-6 py-3 hover:bg-neutral-300 transition duration-300 ease-in-out">
@@ -121,7 +125,7 @@ function Dashboard() {
 											</th>
 										</tr>
 									</thead>
-									<tbody className="bg-white">
+									<tbody className="bg-white ">
 										{data.map(change => (
 											<tr
 												className="bg-white"
@@ -138,6 +142,9 @@ function Dashboard() {
 													{change.applicationId}
 												</td>
 												<td className="px-6 py-4 text-black">{change.state}</td>
+												<td className="px-6 py-4 text-black">
+													{change.roles.name}
+												</td>
 												<td className="px-6 py-4  text-black">
 													{change.changeType}
 												</td>

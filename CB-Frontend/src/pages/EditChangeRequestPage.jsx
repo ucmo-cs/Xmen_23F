@@ -20,17 +20,17 @@ const GrabChangeRequest = () => {
 		queryKey: ["SingleChangeRequest"],
 		queryFn: async () => {
 			const res = await apiFetch("GET", `/api/v1/change/${id}`, {}, {})
-			console.log("API response:", res);
- 			return res.data
+			console.log("API response:", res)
+			return res.data
 		},
 	})
 
 	const { mutateAsync } = useMutation({
-		mutationFn: async (data) => {
-			console.log('Data to be sent:', data);
+		mutationFn: async data => {
+			console.log("Data to be sent:", data)
 			const res = await apiFetch("PUT", `/api/v1/change/${id}`, data, {
 				headers: {
-					'Content-Type': 'application/json'
+					"Content-Type": "application/json",
 				},
 			});
 			console.log('Response from server:', res);
@@ -48,6 +48,7 @@ const GrabChangeRequest = () => {
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["changeRequest"] })
+			queryClient.refetchQueries({ queryKey: ["changeRequest"] })
 			nav("/dashboard")
 		},
 		onError: () => {
@@ -62,6 +63,7 @@ const GrabChangeRequest = () => {
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["changeRequest"] })
+			queryClient.refetchQueries({ queryKey: ["changeRequest"] })
 			nav("/dashboard")
 		},
 		onError: () => {
