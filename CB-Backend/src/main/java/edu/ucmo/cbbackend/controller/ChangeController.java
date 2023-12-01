@@ -73,7 +73,6 @@ public class ChangeController {
     @PutMapping("/api/v1/change/{id}")
     public ResponseEntity<?> updateChangeById(@PathVariable Long id, @RequestBody ChangeRequestBodyDTO changeRequestBody, HttpServletRequest request) {
         try {
-            ChangeRequest changeRequest = changeService.findById(id);
 
             if (changeRequestBody.getRoles() == null) {
                 changeRequestBody.setRoles(userService.loadUserByUsername(request.getUserPrincipal().getName()).getRoles().getName());

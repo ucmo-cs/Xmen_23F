@@ -20,21 +20,26 @@ const GrabChangeRequest = () => {
 		queryKey: ["SingleChangeRequest"],
 		queryFn: async () => {
 			const res = await apiFetch("GET", `/api/v1/change/${id}`, {}, {})
-			console.log(res)
-			return res.data
+			console.log("API response:", res);
+ 			return res.data
 		},
 	})
 
 	const { mutateAsync } = useMutation({
-		mutationFn: async data => {
-			const res = await apiFetch("PUT", `/api/v1/change/${id}`, data, {})
-			console.log(res)
+		mutationFn: async (data) => {
+			console.log('Data to be sent:', data);
+			const res = await apiFetch("PUT", `/api/v1/change/${id}`, data, {
+				headers: {
+					'Content-Type': 'application/json'
+				},
+			});
+			console.log('Response from server:', res);
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["changeRequest"] })
-			nav("/dashboard")
+			queryClient.invalidateQueries({ queryKey: ["changeRequest"] });
+			nav("/dashboard");
 		},
-	})
+	});
 
 	const { mutateAsync: ApproveChangeRequest } = useMutation({
 		mutationFn: async data => {
@@ -102,6 +107,7 @@ function CreateChangeRequest({
 		backoutPlan: yup.string().required("Backout plan is required"),
 		timeToRevert: yup.number().required("Time to revert is required"),
 
+
 		approveOrDeny: yup
 			.string()
 			.oneOf(["APPROVE", "DENY"])
@@ -122,17 +128,26 @@ function CreateChangeRequest({
 	})
 
 	useEffect(() => {
-		setValue("authorId", ChangeRequest.authorId)
-		setValue("changeType", ChangeRequest.changeType)
-		setValue("applicationId", ChangeRequest.applicationId)
-		setValue("timeWindowStart", ChangeRequest.timeWindowStart)
-		setValue("timeWindowEnd", ChangeRequest.timeWindowEnd)
-		setValue("description", ChangeRequest.description)
-		setValue("reason", ChangeRequest.reason)
-		setValue("backoutPlan", ChangeRequest.backoutPlan)
-		setValue("timeToRevert", ChangeRequest.timeToRevert)
-		setValue("implementer", ChangeRequest.implementer)
-	}, [saveChangeRequest])
+		if (ChangeRequest) {
+			setValue("authorId", ChangeRequest.authorId || "");
+			setValue("changeType", ChangeRequest.changeType || "");
+			setValue("applicationId", ChangeRequest.applicationId || "");
+			setValue("timeWindowStart", ChangeRequest.timeWindowStart
+				? dayjs(ChangeRequest.timeWindowStart).format("YYYY-MM-DDTHH:mm")
+				: ""
+			);
+			setValue("timeWindowEnd", ChangeRequest.timeWindowEnd
+				? dayjs(ChangeRequest.timeWindowEnd).format("YYYY-MM-DDTHH:mm")
+				: ""
+			);
+			setValue("description", ChangeRequest.description || "");
+			setValue("reason", ChangeRequest.reason || "");
+			setValue("backoutPlan", ChangeRequest.backoutPlan || "");
+			setValue("timeToRevert", ChangeRequest.timeToRevert || "");
+			setValue("implementer", ChangeRequest.implementer || "");
+		}
+	}, [ChangeRequest, setValue]);
+
 
 	return (
 		<div className="flex-wrap w-full">
@@ -141,7 +156,7 @@ function CreateChangeRequest({
 			<div className="p-4 rounded-full">
 				<div>
 					<form
-						onSubmit={handleSubmit(approveChangeRequest)}
+						onSubmit={handleSubmit(saveChangeRequest)}
 						className="Form px-4">
 						<div className="changeType flex items-center p-2">
 							<label className="m-2">Change Type:</label>
@@ -242,6 +257,7 @@ function CreateChangeRequest({
 									className="flex-box m-2 block p-2 text-gray-900 border-2 border-gray-400 rounded-lg bg-gray-50 outline-none sm:text-md"
 									required
 									{...register("timeToRevert", { required: true })}
+									min="0"
 								/>
 							</div>
 							<div className=" flex p-2">
@@ -317,15 +333,13 @@ function CreateChangeRequest({
 								</button>
 
 								<button
-									onClick={() => {
-										saveChangeRequest()
-									}}
+									type="submit"
 									className="hover:border-black border-2 bg-gray-200 font-bold text-black p-2 rounded-lg m-2">
 									Save
 								</button>
 
 								<button
-									type="submit"
+									onClick={() => approveChangeRequest()}
 									className="hover:border-black border-2 bg-gray-200 font-bold text-black p-2 rounded-lg m-2">
 									Approve
 								</button>

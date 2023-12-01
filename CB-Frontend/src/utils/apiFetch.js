@@ -14,7 +14,7 @@ import axios from "axios"
  *  await apiFetch("GET", "/auth/me")
  */
 
-axios.defaults.baseURL = "http://localhost:8080"
+axios.defaults.baseURL = "http://153.91.194.28:8080/"
 
 export default async function apiFetch(
 	method,
