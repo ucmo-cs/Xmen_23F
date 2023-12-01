@@ -32,14 +32,14 @@ const GrabChangeRequest = () => {
 				headers: {
 					"Content-Type": "application/json",
 				},
-			});
-			console.log('Response from server:', res);
+			})
+			console.log("Response from server:", res)
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["changeRequest"] });
-			nav("/dashboard");
+			queryClient.invalidateQueries({ queryKey: ["changeRequest"] })
+			nav("/dashboard")
 		},
-	});
+	})
 
 	const { mutateAsync: ApproveChangeRequest } = useMutation({
 		mutationFn: async data => {
@@ -109,7 +109,6 @@ function CreateChangeRequest({
 		backoutPlan: yup.string().required("Backout plan is required"),
 		timeToRevert: yup.number().required("Time to revert is required"),
 
-
 		approveOrDeny: yup
 			.string()
 			.oneOf(["APPROVE", "DENY"])
@@ -131,25 +130,28 @@ function CreateChangeRequest({
 
 	useEffect(() => {
 		if (ChangeRequest) {
-			setValue("authorId", ChangeRequest.authorId || "");
-			setValue("changeType", ChangeRequest.changeType || "");
-			setValue("applicationId", ChangeRequest.applicationId || "");
-			setValue("timeWindowStart", ChangeRequest.timeWindowStart
-				? dayjs(ChangeRequest.timeWindowStart).format("YYYY-MM-DDTHH:mm")
-				: ""
-			);
-			setValue("timeWindowEnd", ChangeRequest.timeWindowEnd
-				? dayjs(ChangeRequest.timeWindowEnd).format("YYYY-MM-DDTHH:mm")
-				: ""
-			);
-			setValue("description", ChangeRequest.description || "");
-			setValue("reason", ChangeRequest.reason || "");
-			setValue("backoutPlan", ChangeRequest.backoutPlan || "");
-			setValue("timeToRevert", ChangeRequest.timeToRevert || "");
-			setValue("implementer", ChangeRequest.implementer || "");
+			setValue("authorId", ChangeRequest.authorId || "")
+			setValue("changeType", ChangeRequest.changeType || "")
+			setValue("applicationId", ChangeRequest.applicationId || "")
+			setValue(
+				"timeWindowStart",
+				ChangeRequest.timeWindowStart
+					? dayjs(ChangeRequest.timeWindowStart).format("YYYY-MM-DDTHH:mm")
+					: ""
+			)
+			setValue(
+				"timeWindowEnd",
+				ChangeRequest.timeWindowEnd
+					? dayjs(ChangeRequest.timeWindowEnd).format("YYYY-MM-DDTHH:mm")
+					: ""
+			)
+			setValue("description", ChangeRequest.description || "")
+			setValue("reason", ChangeRequest.reason || "")
+			setValue("backoutPlan", ChangeRequest.backoutPlan || "")
+			setValue("timeToRevert", ChangeRequest.timeToRevert || "")
+			setValue("implementer", ChangeRequest.implementer || "")
 		}
-	}, [ChangeRequest, setValue]);
-
+	}, [ChangeRequest, setValue])
 
 	return (
 		<div className="flex-wrap w-full">
@@ -327,6 +329,13 @@ function CreateChangeRequest({
 								</Link>
 
 								<button
+									type="submit"
+									className="hover:border-black border-2 bg-gray-200 font-bold text-black p-2 rounded-lg m-2">
+									Save
+								</button>
+
+								<button
+									type="button"
 									className="hover:border-black border-2 bg-gray-200 font-bold text-black p-2 rounded-lg m-2"
 									onClick={() => {
 										denyChangeRequest()
@@ -335,12 +344,7 @@ function CreateChangeRequest({
 								</button>
 
 								<button
-									type="submit"
-									className="hover:border-black border-2 bg-gray-200 font-bold text-black p-2 rounded-lg m-2">
-									Save
-								</button>
-
-								<button
+									type="button"
 									onClick={() => approveChangeRequest()}
 									className="hover:border-black border-2 bg-gray-200 font-bold text-black p-2 rounded-lg m-2">
 									Approve
