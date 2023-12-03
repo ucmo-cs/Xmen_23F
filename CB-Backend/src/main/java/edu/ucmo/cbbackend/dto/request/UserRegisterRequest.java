@@ -1,11 +1,18 @@
 package edu.ucmo.cbbackend.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import edu.ucmo.cbbackend.model.ChangeRequest;
 import edu.ucmo.cbbackend.model.Roles;
 import edu.ucmo.cbbackend.model.User;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserRegisterRequest {
 
     private Long id;
@@ -13,16 +20,11 @@ public class UserRegisterRequest {
 
     private String password;
 
-    private Roles role;
+    private String roles;
+    @JsonIgnore
     private List<ChangeRequest> changeRequests;
 
-    public UserRegisterRequest(User user) {
-        this.id = user.getId();
-        this.Username = user.getUsername();
-        this.password = user.getPassword();
-        this.role = user.getRoles();
-        this.changeRequests = user.getChangeRequests();
-    }
+
 
 
 }

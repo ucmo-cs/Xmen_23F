@@ -72,8 +72,11 @@ public class Runner implements CommandLineRunner {
             Superhero userInfo = faker.superhero();
             User user = new User();
             user.setRoles(rolesRepository.findByNameIgnoreCase("USER"));
-            user.setUsername(userInfo.name().replace(" ", "_"));
-
+            if (userInfo.name().length() > 20){
+                user.setUsername(userInfo.name().replace(" ", "_") .substring(0, 15));
+            }else {
+                user.setUsername(userInfo.name().replace(" ", "_"));
+            }
             user.setPassword(userService.passwordEncoder("password"));
             userRepository.save(user);
             logger.info("User was created " + user.getUsername() + " with password " + "password" + " and role " + user.getRoles().getName());
@@ -84,6 +87,11 @@ public class Runner implements CommandLineRunner {
             userInfo = faker.superhero();
             department.setRoles(rolesRepository.findByNameIgnoreCase("DEPARTMENT"));
             department.setUsername(userInfo.name().replace(" ", "_"));
+            if (userInfo.name().length() > 20){
+                department.setUsername(userInfo.name().replace(" ", "_") .substring(0, 15));
+            }else {
+                department.setUsername(userInfo.name().replace(" ", "_"));
+            }
             department.setPassword(userService.passwordEncoder("password"));
 
             userRepository.save(department);
@@ -94,8 +102,13 @@ public class Runner implements CommandLineRunner {
 
             User application = new User();
             userInfo = faker.superhero();
+
             application.setRoles(rolesRepository.findByNameIgnoreCase("APPLICATION"));
-            application.setUsername(userInfo.name().replace(" ", "_"));
+            if (userInfo.name().length() > 20){
+                application.setUsername(userInfo.name().replace(" ", "_") .substring(0, 15));
+            }else {
+                application.setUsername(userInfo.name().replace(" ", "_"));
+            }
             application.setPassword(userService.passwordEncoder("password"));
 
             userRepository.save(application);
@@ -106,7 +119,11 @@ public class Runner implements CommandLineRunner {
             User operations = new User();
             userInfo = faker.superhero();
             operations.setRoles(rolesRepository.findByNameIgnoreCase("OPERATIONS"));
-            operations.setUsername(userInfo.name().replace(" ", "_"));
+            if (userInfo.name().length() > 20){
+                operations.setUsername(userInfo.name().replace(" ", "_") .substring(0, 15));
+            }else {
+                operations.setUsername(userInfo.name().replace(" ", "_"));
+            }
             operations.setPassword(userService.passwordEncoder("password"));
             userRepository.save(operations);
             demoCreateChangeRequest(faker, operations);
@@ -122,43 +139,43 @@ public class Runner implements CommandLineRunner {
 
     private void demoCreateChangeRequest(Faker faker, User user) {
         for (int i = 0; i < 20; i++) {
-                ChangeType changeType;
-                ChangeRequestState changeRequestState;
-                ChangeRequestApproveOrDeny approveOrDeny;
-                ChangeRequestRiskLevel changeRequestRiskLevel;
-                int random = (int) (Math.random() * 3);
-                if (random == 0) {
-                    changeType = ChangeType.PLANNED;
-                }
-                if (random == 1) {
-                    changeType = ChangeType.EMERGENCY;
-                } else {
-                    changeType = ChangeType.UNPLANNED;
-                }
+            ChangeType changeType;
+            ChangeRequestState changeRequestState;
+            ChangeRequestApproveOrDeny approveOrDeny;
+            ChangeRequestRiskLevel changeRequestRiskLevel;
+            int random = (int) (Math.random() * 3);
+            if (random == 0) {
+                changeType = ChangeType.PLANNED;
+            }
+            if (random == 1) {
+                changeType = ChangeType.EMERGENCY;
+            } else {
+                changeType = ChangeType.UNPLANNED;
+            }
 
-                random = (int) (Math.random() * 4);
-                if (random == 0) {
-                    changeRequestState = ChangeRequestState.APPLICATION;
-                }
-               else if(random == 1 ){
-                    changeRequestState = ChangeRequestState.DEPARTMENT;
-                }
-                else if(random == 2 ){
-                    changeRequestState = ChangeRequestState.FROZEN;
-                }
-                else {
-                    changeRequestState = ChangeRequestState.COMPLETE;
-                }
+            random = (int) (Math.random() * 4);
+            if (random == 0) {
+                changeRequestState = ChangeRequestState.APPLICATION;
+            }
+            else if(random == 1 ){
+                changeRequestState = ChangeRequestState.DEPARTMENT;
+            }
+            else if(random == 2 ){
+                changeRequestState = ChangeRequestState.FROZEN;
+            }
+            else {
+                changeRequestState = ChangeRequestState.COMPLETE;
+            }
 
-                random = (int) (Math.random() * 2);
+            random = (int) (Math.random() * 2);
 
-                if(random == 0 ){
-                    approveOrDeny = ChangeRequestApproveOrDeny.APPROVE;
-                } else if (random == 1){
-                    approveOrDeny = ChangeRequestApproveOrDeny.PENDING;
-                } else {
-                    approveOrDeny = ChangeRequestApproveOrDeny.DENIED;
-                }
+            if(random == 0 ){
+                approveOrDeny = ChangeRequestApproveOrDeny.APPROVE;
+            } else if (random == 1){
+                approveOrDeny = ChangeRequestApproveOrDeny.PENDING;
+            } else {
+                approveOrDeny = ChangeRequestApproveOrDeny.DENIED;
+            }
             random = (int) (Math.random() * 2);
 
 
@@ -172,25 +189,25 @@ public class Runner implements CommandLineRunner {
                 changeRequestRiskLevel = ChangeRequestRiskLevel.HIGH;
             }
 
-                ChangeRequest changeRequest = ChangeRequest.builder()
-                        .applicationId(Long.valueOf(faker.number().digits(10)))
-                        .changeType(changeType)
-                        .dateCreated(faker.date().birthday())
-                        .description(faker.lorem().sentence(20))
-                        .dateUpdated(faker.date().birthday())
-                        .author(user)
-                        .reason(faker.lorem().sentence(20))
-                        .Implementer(faker.name().fullName())
-                        .timeToRevert(Long.valueOf(faker.number().digits(10)))
-                        .timeWindowStart(faker.date().future(365, java.util.concurrent.TimeUnit.DAYS))
-                        .timeWindowEnd(faker.date().future(700, 366 ,java.util.concurrent.TimeUnit.DAYS))
-                        .approveOrDeny(approveOrDeny)
-                        .state(changeRequestState)
-                        .riskLevel(changeRequestRiskLevel)
-                        .backoutPlan(faker.lorem().sentence(100))
-                        .roles(user.getRoles())
-                        .build();
-                changeService.save(changeRequest);
-            }
+            ChangeRequest changeRequest = ChangeRequest.builder()
+                    .applicationId(Long.valueOf(faker.number().digits(10)))
+                    .changeType(changeType)
+                    .dateCreated(faker.date().birthday())
+                    .description(faker.lorem().sentence(10))
+                    .dateUpdated(faker.date().birthday())
+                    .author(user)
+                    .reason(faker.lorem().sentence(20))
+                    .Implementer(faker.name().fullName())
+                    .timeToRevert(Long.valueOf(faker.number().digits(10)))
+                    .timeWindowStart(faker.date().future(365, java.util.concurrent.TimeUnit.DAYS))
+                    .timeWindowEnd(faker.date().future(700, 366 ,java.util.concurrent.TimeUnit.DAYS))
+                    .approveOrDeny(approveOrDeny)
+                    .state(changeRequestState)
+                    .riskLevel(changeRequestRiskLevel)
+                    .backoutPlan(faker.lorem().sentence(10))
+                    .roles(user.getRoles())
+                    .build();
+            changeService.save(changeRequest);
+        }
     }
 }

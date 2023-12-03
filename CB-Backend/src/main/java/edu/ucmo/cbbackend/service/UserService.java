@@ -1,5 +1,7 @@
 package edu.ucmo.cbbackend.service;
 
+import edu.ucmo.cbbackend.dto.request.UserRegisterRequest;
+import edu.ucmo.cbbackend.dto.response.UserResponse;
 import edu.ucmo.cbbackend.model.User;
 import edu.ucmo.cbbackend.repository.RolesRepository;
 import edu.ucmo.cbbackend.repository.UserRepository;
@@ -52,4 +54,18 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         return user;
     }
+
+    public User toEntity(UserRegisterRequest userRegisterRequest){
+        User user = new User();
+        user.setUsername(userRegisterRequest.getUsername());
+        user.setPassword(passwordEncoder(userRegisterRequest.getPassword()));
+        user.setRoles(rolesRepository.findByNameIgnoreCase(userRegisterRequest.getRoles().toUpperCase()));
+        return user;
+    }
+
+    public UserResponse toDto(User user){
+        return new UserResponse(user);
+    }
+
+
 }
