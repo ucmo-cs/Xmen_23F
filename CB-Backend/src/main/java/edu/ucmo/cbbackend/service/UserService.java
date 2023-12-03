@@ -58,8 +58,12 @@ public class UserService implements UserDetailsService {
     public User toEntity(UserRegisterRequest userRegisterRequest){
         User user = new User();
         user.setUsername(userRegisterRequest.getUsername());
-        user.setPassword(passwordEncoder(userRegisterRequest.getPassword()));
+        user.setPassword(userRegisterRequest.getPassword());
         user.setRoles(rolesRepository.findByNameIgnoreCase(userRegisterRequest.getRoles().toUpperCase()));
+        user.setAccountNonExpired(true);
+        user.setAccountNonLocked(true);
+        user.setCredentialsNonExpired(true);
+        user.setEnabled(true);
         return user;
     }
 

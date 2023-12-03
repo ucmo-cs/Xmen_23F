@@ -66,8 +66,7 @@ public class UserController {
 
         try {
          User  userEnity  =   userService.toEntity(user);
-
-            userService.save(userEnity);
+        userService.save(userEnity);
             return ResponseEntity.ok().body(new UserResponse(userEnity));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.toString());
